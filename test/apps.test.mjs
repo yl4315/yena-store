@@ -19,8 +19,8 @@ test('apps.json: id가 겹치지 않는다', () => {
   assert.equal(new Set(ids).size, ids.length);
 });
 
-test('apps.json: 지금 앱 네 개 (CR-037)', () => {
-  assert.deepEqual(Object.keys(byId), ['calendar', 'karaoke', 'family', 'finance']);
+test('apps.json: 처음 네 칸은 기존 앱 (CR-037), 새 앱은 그 뒤에 (CR-038 새 앱 공장)', () => {
+  assert.deepEqual(Object.keys(byId).slice(0, 4), ['calendar', 'karaoke', 'family', 'finance']);
   assert.equal(byId.calendar.name, '예나의 하루');
   assert.equal(byId.karaoke.name, 'YT 노래방');
   assert.equal(byId.family.name, 'YeTae-World');
