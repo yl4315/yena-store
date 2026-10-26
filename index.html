@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ko" data-theme="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.github.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex, nofollow">
+<title>예나의 앱 가게</title>
+<meta name="apple-mobile-web-app-title" content="앱 가게">
+<meta name="description" content="Yena Inc. 앱을 받고 여는 곳">
+<meta name="theme-color" content="#FFFFFF" media="(prefers-color-scheme: light)" data-scheme="light">
+<meta name="theme-color" content="#121316" media="(prefers-color-scheme: dark)" data-scheme="dark">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&amp;display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="style.css">
+<script src="boot.js"></script>
+<script src="haptics.js" defer></script>
+<script type="module" src="app.js"></script>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <h1 class="title">앱 가게</h1>
+    <p class="subtitle">우리 앱을 받거나 바로 열어요</p>
+  </header>
+
+  <main>
+    <section class="apps" id="apps" aria-label="앱 목록" aria-busy="true">
+      <p class="state" id="apps-state">앱 목록을 불러오는 중이에요</p>
+    </section>
+    <noscript><p class="state">이 페이지는 자바스크립트가 켜져 있어야 보여요.</p></noscript>
+
+    <section class="card install-card" id="install-card" aria-labelledby="install-title" hidden>
+      <img class="install-icon" src="icons/store-192.png" alt="" width="40" height="40">
+      <div class="install-texts">
+        <p class="install-title" id="install-title">홈 화면에 추가</p>
+        <p class="install-text">앱처럼 바로 열려요</p>
+      </div>
+      <button type="button" class="btn btn-small" id="install-button" aria-label="앱 가게를 홈 화면에 추가">추가</button>
+    </section>
+
+    <h2 class="section-title">도움말</h2>
+    <div class="card list-card">
+      <details class="help" id="help-install">
+        <summary>처음 설치할 때</summary>
+        <ol class="steps">
+          <li>앱 카드의 <b>설치</b>를 누르면 설치 파일(.apk)을 내려받아요.</li>
+          <li>다 받으면 화면 아래 <b>열기</b>를 누르거나, Chrome <b>⋮ → 다운로드</b>에서 파일을 눌러요.</li>
+          <li><b>출처를 알 수 없는 앱</b> 안내가 나오면 <b>설정</b>을 눌러 Chrome을 허용하고 돌아와요. 한 번만 하면 돼요.</li>
+          <li><b>설치</b>를 누르면 끝이에요. 이미 깔려 있으면 <b>업데이트</b>로 나오고, 기록은 그대로 남아요.</li>
+          <li>Play 프로텍트 안내가 나오면 <b>세부정보</b>를 열고 <b>무시하고 설치</b>(또는 <b>그래도 설치</b>)를 골라요.</li>
+        </ol>
+      </details>
+      <details class="help" id="help-home">
+        <summary>홈 화면에 추가</summary>
+        <ol class="steps">
+          <li>Chrome 오른쪽 위 <b>⋮</b>를 눌러요.</li>
+          <li><b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 눌러요.</li>
+          <li>홈 화면에 <b>앱 가게</b> 아이콘이 생겨요. 인터넷이 없을 때도 마지막으로 본 화면이 열려요.</li>
+          <li>아이폰은 Safari 아래 <b>공유</b> 버튼 → <b>홈 화면에 추가</b>예요.</li>
+        </ol>
+      </details>
+    </div>
+
+    <h2 class="section-title">화면</h2>
+    <div class="card setting">
+      <p class="setting-name" id="theme-label">테마</p>
+      <div class="chips" id="theme-picker" role="radiogroup" aria-labelledby="theme-label">
+        <button type="button" role="radio" aria-checked="true" data-theme-value="system">시스템 설정</button>
+        <button type="button" role="radio" aria-checked="false" data-theme-value="light">라이트</button>
+        <button type="button" role="radio" aria-checked="false" data-theme-value="dark">다크</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">Yena Inc.</footer>
+</div>
+</body>
+</html>

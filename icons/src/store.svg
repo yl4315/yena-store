@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+<!--
+  예나 앱 스토어 아이콘 원본 (회사 아이콘 틀 2, CEO 결정 N3). 디자인실.
+  배경: 135도 그라데이션 = 패밀리 허브 icon.dept.family-hub, icon.gradient.middle, icon.gradient.end
+  가운데: 흰 카드 icon.card (캘린더 아이콘과 같은 자리·모서리: 190,200 / 644x640 / 모서리 90)
+  그림: 둥근 블록 4개를 2x2로 = 앱이 모인 곳. 블록 색 icon.block.1, 3, 4, 5. 글자 없음.
+  이 파일 = 둥근 네모(any). 꽉 찬 네모(apple-touch-icon)와 maskable은 build-store-icons.mjs가 여기서 만든다.
+-->
+<defs><linearGradient id="bg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1024" y2="1024"><stop offset="0" stop-color="#CDEEDD"/><stop offset="0.5" stop-color="#EEEAFE"/><stop offset="1" stop-color="#E3F5F8"/></linearGradient></defs>
+<rect id="back" width="1024" height="1024" rx="230" fill="url(#bg)"/>
+<g id="art">
+<rect x="190" y="200" width="644" height="640" rx="90" fill="#FFFFFF"/>
+<rect x="282" y="290" width="208" height="208" rx="52" fill="#F7BDB8"/>
+<rect x="534" y="290" width="208" height="208" rx="52" fill="#FBE7A6"/>
+<rect x="282" y="542" width="208" height="208" rx="52" fill="#C2E5CD"/>
+<rect x="534" y="542" width="208" height="208" rx="52" fill="#C3DDFA"/>
+</g>
+</svg>

@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "예나의 앱 가게",
+  "short_name": "앱 가게",
+  "description": "Yena Inc. 앱을 받고 여는 곳",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "icons": [
+    { "src": "icons/store-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/store-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/store-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
