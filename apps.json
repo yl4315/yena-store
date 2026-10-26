@@ -75,6 +75,40 @@
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "tip",
+      "name": "예태 팁계산",
+      "short": "팁계산",
+      "dept": "재무회계팀",
+      "icon": "icons/apps/tip.png",
+      "color": "#FDF0C4",
+      "summary": "팁·나눠 내기를 바로 계산해요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "tip-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "memo",
+      "name": "예나의 메모함",
+      "short": "메모함",
+      "dept": "기획조정실",
+      "icon": "icons/apps/memo.png",
+      "color": "#FDE8EE",
+      "summary": "공유하면 바로 저장되는 링크·글 보관함",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "memo-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
