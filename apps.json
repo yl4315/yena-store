@@ -1,0 +1,63 @@
+{
+  "about": "예나의 앱 가게 앱 목록. 부서는 자기 앱 칸만 고쳐요. 칸 설명은 README.md, 고친 뒤 npm test.",
+  "apps": [
+    {
+      "id": "calendar",
+      "name": "예나의 하루",
+      "short": "하루",
+      "dept": "기획조정실",
+      "icon": "icons/apps/calendar.png",
+      "color": "#FDE8EE",
+      "summary": "일정·습관·일기·루틴을 한 곳에, 말로도 기록해요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-day",
+        "tagPrefix": "app-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-day/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "karaoke",
+      "name": "YT 노래방",
+      "short": "노래방",
+      "dept": "크리에이티브 랩",
+      "icon": "icons/apps/karaoke.png",
+      "color": "#FDDCCF",
+      "summary": "유튜브 MR로 부르고 가사·녹음·점수까지",
+      "kind": "web",
+      "url": "https://yl4315.github.io/yt-noraebang/",
+      "version": "2026-10-24",
+      "date": "2026-10-24",
+      "notes": "Drive 폴더에 직접 넣은 MR을 곡 목록으로 가져와요",
+      "notice": "휴대폰 리모컨은 집 PC에서 노래방 서버를 켰을 때만 돼요"
+    },
+    {
+      "id": "family",
+      "name": "YeTae-World",
+      "short": "가족",
+      "dept": "패밀리 허브",
+      "icon": "icons/apps/family.png",
+      "color": "#CDEEDD",
+      "summary": "가족끼리 사진·소식·기념일을 나눠요",
+      "kind": "private",
+      "notice": "가족 전용 — 관리자에게 초대를 받아요"
+    },
+    {
+      "id": "finance",
+      "name": "YeTae-Fi 가계부",
+      "short": "가계부",
+      "dept": "재무회계팀",
+      "icon": "icons/apps/finance.png",
+      "color": "#FDF0C4",
+      "summary": "계좌와 지출을 한눈에",
+      "kind": "web",
+      "url": "https://yetae-fi.vercel.app",
+      "version": "2026-09-24",
+      "date": "2026-09-24",
+      "notes": "은행 연결 상태 보기·다시 연결, 폰에서 기간 고르기",
+      "notice": "허용된 구글 계정으로만 들어가요"
+    }
+  ]
+}
