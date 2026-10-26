@@ -1,0 +1,10 @@
+{
+  "name": "yena-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "예나의 앱 가게 — Yena Inc. 앱을 받고 여는 정적 웹앱 (GitHub Pages)",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
