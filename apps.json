@@ -58,6 +58,23 @@
       "date": "2026-09-24",
       "notes": "은행 연결 상태 보기·다시 연결, 폰에서 기간 고르기",
       "notice": "허용된 구글 계정으로만 들어가요"
+    },
+    {
+      "id": "packing",
+      "name": "예나의 여행",
+      "short": "여행",
+      "dept": "인사·웰니스팀",
+      "icon": "icons/apps/packing.png",
+      "color": "#E8D3F0",
+      "summary": "여행 짐 목록을 만들고 싸면서 체크해요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "packing-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
