@@ -126,6 +126,23 @@
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "fridge",
+      "name": "예나의 냉장고",
+      "short": "냉장고",
+      "dept": "총무·스마트홈팀",
+      "icon": "icons/apps/fridge.png",
+      "color": "#CDEBFA",
+      "summary": "먼저 상하는 것부터 보이고, 떨어지면 장보기에 올라가요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "fridge-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
