@@ -23,7 +23,7 @@ test('apps.json: 처음 네 칸은 기존 앱 (CR-037), 새 앱은 그 뒤에 (C
   assert.deepEqual(Object.keys(byId).slice(0, 4), ['calendar', 'karaoke', 'family', 'finance']);
   assert.equal(byId.calendar.name, '예나의 하루');
   assert.equal(byId.karaoke.name, 'YT 노래방');
-  assert.equal(byId.family.name, 'YeTae-World');
+  assert.equal(byId.family.name, '예태 가족'); // 앱 안 이름 (CR-022), 홈 화면 아이콘 이름은 short "가족"
   assert.equal(byId.finance.name, 'YeTae-Fi 가계부');
 });
 
@@ -39,12 +39,26 @@ test('캘린더: GitHub 릴리스의 app- 태그 APK', () => {
   assert.equal(c.version, undefined, '버전은 GitHub에서 자동으로 읽는다');
 });
 
-test('가족 앱: 버튼·주소·버전 없이 안내만', () => {
+test('가족 앱 (CR-049): 공개 저장소 yetae-world 릴리스의 번호 태그 app-N APK, 버전 0.1.N', () => {
   const f = byId.family;
-  assert.equal(f.kind, 'private');
-  for (const k of ['url', 'version', 'date', 'notes', 'release']) assert.equal(f[k], undefined, k);
-  assert.equal(f.notice, '가족 전용 — 관리자에게 초대를 받아요');
-  assert.doesNotMatch(JSON.stringify(f), /https?:|www\./);
+  assert.equal(f.kind, 'android-release');
+  assert.equal(f.short, '가족');
+  assert.deepEqual(f.release, {
+    repo: 'yl4315/yetae-world',
+    tagPrefix: 'app-',
+    asset: '.apk',
+    fallbackUrl: 'https://github.com/yl4315/yetae-world/releases',
+    versionPrefix: '0.1.',
+  });
+  for (const k of ['url', 'version', 'date', 'notes']) assert.equal(f[k], undefined, `${k}: 버전은 GitHub에서 자동으로 읽는다`);
+  // 안내: 로그인은 여전히 초대된 가족만 + 처음 설치 안내. 초대 링크·주소는 넣지 않는다
+  assert.match(f.notice, /초대받은 가족만 로그인돼요/);
+  assert.match(f.notice, /처음 설치할 때/);
+  assert.ok(f.notice.length <= 80);
+  assert.doesNotMatch(f.notice, /https?:|www\./);
+  // 주소는 공개 릴리스 페이지·저장소뿐
+  const urls = JSON.stringify(f).match(/https?:\/\/[^"]+/g);
+  assert.deepEqual(urls, ['https://github.com/yl4315/yetae-world/releases']);
 });
 
 test('웹앱: 주소는 https만', () => {
@@ -124,6 +138,19 @@ test('검사: 주소는 https만', () => {
   assert.ok(has(validateApp({ ...WEB, url: ['https://user:pw', '@', 'example.com/'].join('') }), /url/));
   assert.ok(has(validateApp({ ...AND, release: { ...AND.release, fallbackUrl: 'http://github.com/x' } }), /fallbackUrl/));
   assert.ok(has(validateApp({ ...WEB, notes: '자세히는 http://example.com 에서' }), /https만/));
+});
+
+test('검사: 번호 태그 앱의 versionPrefix ("0.1."처럼 숫자와 점, 점으로 끝)', () => {
+  const NUM = { ...AND, release: { ...AND.release, repo: 'yl4315/yetae-world', fallbackUrl: 'https://github.com/yl4315/yetae-world/releases', versionPrefix: '0.1.' } };
+  assert.deepEqual(validateApp(NUM), []);
+  for (const versionPrefix of ['1.', '2.0.', '10.20.30.']) {
+    assert.deepEqual(validateApp({ ...NUM, release: { ...NUM.release, versionPrefix } }), [], versionPrefix);
+  }
+  for (const versionPrefix of ['', '0.1', 'v0.1.', '.', '0..', 'a.', '0.1.2.3.', ' 0.1.', 1, null, true]) {
+    assert.ok(has(validateApp({ ...NUM, release: { ...NUM.release, versionPrefix } }), /versionPrefix/), String(versionPrefix));
+  }
+  // web·private에는 release 자체가 없다
+  assert.ok(has(validateApp({ ...WEB, release: NUM.release }), /모르는 칸 "release"/));
 });
 
 test('검사: private에는 주소·버전·링크를 넣지 않는다', () => {

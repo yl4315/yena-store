@@ -35,14 +35,21 @@
     },
     {
       "id": "family",
-      "name": "YeTae-World",
+      "name": "예태 가족",
       "short": "가족",
       "dept": "패밀리 허브",
       "icon": "icons/apps/family.png",
       "color": "#CDEEDD",
       "summary": "가족끼리 사진·소식·기념일을 나눠요",
-      "kind": "private",
-      "notice": "가족 전용 — 관리자에게 초대를 받아요"
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yetae-world",
+        "tagPrefix": "app-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yetae-world/releases",
+        "versionPrefix": "0.1."
+      },
+      "notice": "안드로이드 폰 전용, 초대받은 가족만 로그인돼요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     },
     {
       "id": "finance",

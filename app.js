@@ -1,5 +1,5 @@
 // 예나의 앱 가게 화면.
-// apps.json을 읽어 앱 카드를 그리고, "android-release" 앱(캘린더, 새 앱 공장 앱)은 GitHub 릴리스에서 최신 설치 파일을 찾는다.
+// apps.json을 읽어 앱 카드를 그리고, "android-release" 앱(캘린더, 가족 앱, 새 앱 공장 앱)은 GitHub 릴리스에서 최신 설치 파일을 찾는다.
 //
 // GitHub 릴리스 읽기 (시간당 60번 한도)
 // - 저장소마다 한 번만 묻는다: 여러 앱이 같은 저장소를 쓰면 같은 요청을 함께 쓴다 (store-core createRepoLoader).

@@ -157,7 +157,7 @@ b { font-weight: var(--font-weight-bold); }
 }
 .btn[aria-disabled="true"] { opacity: var(--opacity-disabled); pointer-events: none; cursor: default; }
 
-/* 가족 앱: 버튼 자리에 잠금 안내. 누르는 것이 아니라서 버튼 모양 대신 안내 띠(.notice와 같음) + 🔒 */
+/* private 앱: 버튼 자리에 잠금 안내. 누르는 것이 아니라서 버튼 모양 대신 안내 띠(.notice와 같음) + 🔒 */
 .locked { display: flex; align-items: flex-start; gap: var(--space-sm); }
 
 /* 불러오는 동안 자리 */
