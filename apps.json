@@ -109,6 +109,23 @@
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "worklog",
+      "name": "예나의 일지",
+      "short": "일지",
+      "dept": "인사·웰니스팀",
+      "icon": "icons/apps/worklog.png",
+      "color": "#E8D3F0",
+      "summary": "오늘 한 일 3줄을 이력서 문장으로 바꿔요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "worklog-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
