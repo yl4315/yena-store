@@ -1,8 +1,9 @@
-// store-core.js 순수 함수 검사: 릴리스 고르기, 버전·날짜·크기 글, 저장소 목록 읽기·저장, 카드 내용.
+// store-core.js 순수 함수 검사: 릴리스 고르기(날짜 도장·번호 태그), 버전·날짜·크기 글, 저장소 목록 읽기·저장, 카드 내용.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   CACHE_MAX_AGE_MS,
+  appTagRest,
   cardView,
   createRepoLoader,
   cleanNotes,
@@ -396,7 +397,7 @@ test('cardView: 캘린더 — 불러오는 중 / 성공 / 실패 후 저장분 /
   assert.match(none.status, /설치 파일이 없어요/);
 });
 
-test('cardView: 웹앱은 "열기" 새 탭, 가족 앱은 버튼 없이 잠금 안내', () => {
+test('cardView: 웹앱은 "열기" 새 탭, private 앱은 버튼 없이 잠금 안내', () => {
   const web = cardView(
     { kind: 'web', url: 'https://yl4315.github.io/yt-noraebang/', version: '2026-10-24', date: '2026-10-24', notes: '바뀐 점', notice: '안내' },
     {},
@@ -406,8 +407,143 @@ test('cardView: 웹앱은 "열기" 새 탭, 가족 앱은 버튼 없이 잠금 �
   assert.equal(web.meta, '버전 2026.10.24');
   assert.equal(web.notes, '바뀐 점');
 
-  const priv = cardView({ kind: 'private', notice: '가족 전용 — 관리자에게 초대를 받아요' });
-  assert.deepEqual(priv.action, { type: 'locked', label: '가족 전용 — 관리자에게 초대를 받아요' });
+  const priv = cardView({ kind: 'private', notice: '초대받은 사람만 써요' });
+  assert.deepEqual(priv.action, { type: 'locked', label: '초대받은 사람만 써요' });
   assert.equal(priv.meta, '');
   assert.equal(priv.notice, '');
+});
+
+// ── 번호 태그 (CR-049 가족 앱: 공개 저장소 yetae-world, 태그 app-N, 파일 yetae-world.apk, 버전 0.1.N) ──
+// N = 가족 앱 git 커밋 수 = versionCode. 클수록 새 버전이고, 시험판(prerelease)은 예나 폰만 → 가게에는 정식만.
+
+const FAM_REPO = 'yl4315/yetae-world';
+const FAM_OPTS = { repo: FAM_REPO, tagPrefix: 'app-', asset: '.apk', versionPrefix: '0.1.' };
+const famRel = (tag, publishedAt, extra = {}) => ({
+  tag_name: tag,
+  draft: false,
+  prerelease: false,
+  published_at: publishedAt,
+  html_url: `https://github.com/${FAM_REPO}/releases/tag/${tag}`,
+  body: `${tag} 바뀐 점`,
+  assets: [
+    {
+      name: 'yetae-world.apk',
+      size: 8524073,
+      state: 'uploaded',
+      content_type: 'application/vnd.android.package-archive',
+      browser_download_url: `https://github.com/${FAM_REPO}/releases/download/${tag}/yetae-world.apk`,
+    },
+  ],
+  ...extra,
+});
+// 2026-10-27 실제 모양: 첫 공개 릴리스 app-60은 아직 시험판 (예나가 확인하면 정식이 된다)
+const FAM_NOW = [famRel('app-60', '2026-10-27T06:59:36Z', { prerelease: true })];
+const FAM_OFFICIAL = [famRel('app-60', '2026-10-27T06:59:36Z')];
+const FAMILY = {
+  id: 'family',
+  name: '예태 가족',
+  kind: 'android-release',
+  notice: '안드로이드 폰 전용, 초대받은 가족만 로그인돼요',
+  release: { repo: FAM_REPO, tagPrefix: 'app-', asset: '.apk', fallbackUrl: `https://github.com/${FAM_REPO}/releases`, versionPrefix: '0.1.' },
+};
+
+test('번호 태그: 시험판만 있으면 고르지 않고, 정식이 되면 "0.1.60"', () => {
+  assert.equal(pickRelease(FAM_NOW, FAM_OPTS), null);
+  const r = pickRelease(FAM_OFFICIAL, FAM_OPTS);
+  assert.equal(r.tag, 'app-60');
+  assert.equal(r.version, '0.1.60');
+  assert.equal(r.fileName, 'yetae-world.apk');
+  assert.equal(r.fileUrl, 'https://github.com/yl4315/yetae-world/releases/download/app-60/yetae-world.apk');
+  assert.equal(r.pageUrl, 'https://github.com/yl4315/yetae-world/releases/tag/app-60');
+  assert.equal(r.size, 8524073);
+  assert.equal(r.publishedAt, '2026-10-27T06:59:36.000Z');
+  assert.equal(r.notes, 'app-60 바뀐 점');
+});
+
+test('번호 태그: 게시 시각·API 순서와 상관없이 번호가 가장 큰 정식 릴리스', () => {
+  const elsewhere = { ...famRel('app-65', '').assets[0], browser_download_url: 'https://example.com/yetae-world.apk' };
+  const list = [
+    famRel('app-59', '2026-11-05T00:00:00Z'), // 옛 번호를 나중에 다시 정식으로 바꿔도
+    famRel('app-61', '2026-11-01T00:00:00Z'),
+    famRel('app-9', '2026-11-06T00:00:00Z'), // 글자 순서(9 > 61)가 아니라 숫자 순서
+    famRel('app-62', '2026-11-03T00:00:00Z', { prerelease: true }), // 시험판
+    famRel('app-63', '2026-11-04T00:00:00Z', { draft: true }), // 초안
+    famRel('app-64', '2026-11-04T00:00:00Z', { assets: [] }), // 파일 없음
+    famRel('app-65', '2026-11-04T00:00:00Z', { assets: [elsewhere] }), // 다른 곳 주소
+    ...FAM_NOW,
+  ];
+  assert.equal(pickRelease(list, FAM_OPTS).tag, 'app-61');
+  assert.equal(pickRelease([...list].reverse(), FAM_OPTS).tag, 'app-61');
+  assert.equal(pickRelease(list, FAM_OPTS).version, '0.1.61');
+});
+
+test('번호 태그: 앞머리 + 숫자 1~9자리(0으로 시작하지 않음)만, 날짜 도장 앱과 섞이지 않는다', () => {
+  const only = (tag, opts) => pickRelease([famRel(tag, '2026-11-02T00:00:00Z')], opts)?.tag ?? null;
+  for (const tag of ['app-1', 'app-60', 'app-999999999']) assert.equal(only(tag, FAM_OPTS), tag, tag);
+  for (const tag of ['app-0', 'app-060', 'app-1234567890', 'app-202610251128', 'app-60a', 'app-6.0', 'app-', 'app--60', 'app-+60', 'app- 60', 'app-v60', 'APP-60', 'appx-60', 'app-store-60']) {
+    assert.equal(only(tag, FAM_OPTS), null, tag);
+  }
+  // versionPrefix가 없는 앱(캘린더·새 앱 공장)은 지금처럼 숫자 12자리만: 번호 태그는 고르지 않는다
+  const stamp = { repo: FAM_REPO, tagPrefix: 'app-', asset: '.apk' };
+  assert.equal(only('app-60', stamp), null);
+  assert.equal(only('app-202610251128', stamp), 'app-202610251128');
+  // 같은 저장소·같은 앞머리에 두 방식이 섞여도 각자 자기 것만
+  const mixed = [famRel('app-202612010000', '2026-12-01T00:00:00Z'), famRel('app-61', '2026-11-01T00:00:00Z')];
+  assert.equal(pickRelease(mixed, stamp).tag, 'app-202612010000');
+  assert.equal(pickRelease(mixed, FAM_OPTS).tag, 'app-61');
+
+  assert.equal(appTagRest('app-60', 'app-', '0.1.'), '60');
+  assert.equal(appTagRest('app-60', 'app-'), null);
+  assert.equal(appTagRest('app-202610251128', 'app-'), '202610251128');
+  assert.equal(appTagRest('app-202610251128', 'app-', '0.1.'), null);
+  assert.equal(appTagRest(undefined, 'app-', '0.1.'), null);
+});
+
+test('versionFromTag: versionPrefix가 있으면 번호 태그에 붙인다', () => {
+  assert.equal(versionFromTag('app-60', 'app-', '0.1.'), '0.1.60');
+  assert.equal(versionFromTag('app-7', 'app-', '2.0.'), '2.0.7');
+  assert.equal(versionFromTag('app-60', 'app-'), '60'); // 없으면 지금처럼 앞머리만 뗀다
+  assert.equal(versionFromTag('app-202610251128', 'app-', '0.1.'), '2026.10.25 11:28');
+  assert.equal(versionFromTag('app-beta', 'app-', '0.1.'), 'beta');
+});
+
+test('번호 태그 카드: 정식이면 "버전 0.1.60 · 날짜 · 크기" + 설치, 시험판뿐이면 릴리스 페이지', async () => {
+  const env = fakeEnv({ [REPO]: REAL, [FAM_REPO]: [...FAM_OFFICIAL, famRel('app-61', '2026-10-28T01:00:00Z', { prerelease: true })] });
+  const [fam, cal] = await statesFor(env, [FAMILY, CAL]);
+  assert.equal(env.calls.length, 2, '저장소마다 한 번');
+  assert.equal(fam.status, 'ok');
+  assert.equal(fam.release.tag, 'app-60', '시험판 app-61은 가게에 안 보인다');
+
+  const opts = { now: Date.parse('2026-10-28T03:00:00Z'), timeZone: 'Etc/GMT-9' };
+  const view = cardView(FAMILY, fam, opts);
+  assert.equal(view.meta, '버전 0.1.60 · 10월 27일 · 8.5MB'); // 버전에 날짜가 없어서 올린 날을 붙인다
+  assert.equal(view.notes, 'app-60 바뀐 점');
+  assert.deepEqual(view.action, {
+    type: 'install',
+    label: '설치',
+    href: 'https://github.com/yl4315/yetae-world/releases/download/app-60/yetae-world.apk',
+    newTab: false,
+  });
+  assert.equal(view.notice, FAMILY.notice);
+  // 날짜 도장 앱은 버전이 날짜라 날짜를 두 번 쓰지 않는다 (전과 같음)
+  assert.equal(cardView(CAL, cal, opts).meta, '버전 2026.10.25 11:28 · 86.3MB');
+
+  // 지금(2026-10-27): 시험판 app-60뿐 → "아직 올라온 설치 파일이 없어요" + GitHub 릴리스 페이지
+  const now = releaseStateFor(FAMILY, { status: 'ok', releases: trimReleases(FAM_NOW), checkedAt: 1 });
+  assert.deepEqual(now, { status: 'ok', release: null, checkedAt: 1 });
+  const waiting = cardView(FAMILY, now, opts);
+  assert.match(waiting.status, /설치 파일이 없어요/);
+  assert.deepEqual(waiting.action, { type: 'link', label: 'GitHub에서 보기', href: 'https://github.com/yl4315/yetae-world/releases', newTab: true });
+});
+
+test('번호 태그: 저장해 둔 목록(인터넷 끊김)에서도 같은 것을 고른다', () => {
+  const raw = [famRel('app-61', '2026-11-01T00:00:00Z'), famRel('app-62', '2026-11-02T00:00:00Z', { prerelease: true }), ...FAM_OFFICIAL];
+  const back = parseRepoCacheEntry(JSON.stringify(makeRepoCacheEntry(raw, 1)));
+  assert.deepEqual(back.releases.map((r) => r.tag_name), ['app-61', 'app-60']); // 시험판은 저장하지 않는다
+  assert.deepEqual(pickRelease(back.releases, FAM_OPTS), pickRelease(raw, FAM_OPTS));
+  const stale = releaseStateFor(FAMILY, { status: 'stale', releases: back.releases, checkedAt: Date.parse('2026-11-02T06:05:00Z') });
+  const view = cardView(FAMILY, stale, { now: Date.parse('2026-11-02T08:00:00Z'), timeZone: 'Etc/GMT-9' });
+  assert.equal(view.action.type, 'install');
+  assert.match(view.meta, /^버전 0\.1\.61 · /);
+  assert.equal(view.status, '마지막 확인 오후 3시 5분');
 });

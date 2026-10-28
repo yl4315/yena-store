@@ -10,14 +10,14 @@ Yena Inc. 앱을 받고 여는 정적 웹앱. GitHub Pages(`main` 맨 위 폴더
 
 ## 꼭 지킬 것
 
-- **공개 저장소다.** 개인 정보, 가족 이름·관계·사는 곳, 비공개 링크(App Distribution 초대, 비공개 저장소, Tailscale, 포털), 키·토큰, PC 경로를 어느 파일에도 넣지 않는다. 가족 앱은 `private` — 초대 링크를 넣지 않는다.
+- **공개 저장소다.** 개인 정보, 가족 이름·관계·사는 곳, 비공개 링크(App Distribution 초대, 비공개 저장소, Tailscale, 포털), 키·토큰, PC 경로를 어느 파일에도 넣지 않는다. 가족 앱은 공개 릴리스 저장소(`yl4315/yetae-world`)에서 내려받게 하지만(CR-049) 초대 링크는 넣지 않는다 — 로그인은 초대된 가족만.
 - **`main` push = 배포.** 작업은 `cr-###-이름` 브랜치에서, `main` 합치기·push는 검수와 CEO ③ 승인 뒤 팀장이 한다.
 - 커밋 메일은 저장소 로컬 설정의 GitHub noreply 주소. **바꾸지 않는다.** **이 폴더에서만 커밋하고, 커밋 전에 `git config user.email`이 noreply인지 확인한다** (PC 전역 메일은 개인 메일). `npm test`가 모든 커밋 메일을 검사한다.
 - 개인 낱말(학교·사는 곳 등)은 이 저장소 어디에도, 검사 규칙에도 적지 않는다. 목록은 비공개 본사 `departments/family-hub/store-private-words.txt`(또는 `YENA_PRIVATE_WORDS`)에만 있고 `test/public.test.mjs`가 읽는다. 테스트의 가짜 비밀값은 조각을 이어 붙여 만든다.
 - 커밋 메시지는 한국어, 끝에 빈 줄 + `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 - 빌드·npm 패키지 없이 간다. 화면은 `tokens.css` 변수만 쓰고 회사 디자인 기준(캘린더 "예나의 하루")을 따른다.
 - CSP 때문에 인라인 스크립트·스타일·`onclick=`을 쓰지 않는다. 바깥에서 온 글(릴리스 설명 등)은 `textContent`로만 넣는다.
-- GitHub 릴리스는 `/releases/latest`를 쓰지 않는다 (같은 저장소의 "Latest"는 음성 모델). 태그는 앞머리 + 숫자 12자리만 (`store-core.js`의 `pickRelease`).
+- GitHub 릴리스는 `/releases/latest`를 쓰지 않는다 (같은 저장소의 "Latest"는 음성 모델). 태그는 앞머리 + 숫자 12자리(게시 시각이 가장 늦은 것), `release.versionPrefix`가 있는 앱만 앞머리 + 번호 1~9자리(번호가 가장 큰 것, 가족 앱 `app-60` → "0.1.60"). 시험판·초안은 뺀다 (`store-core.js`의 `pickRelease`).
 - GitHub API는 저장소마다 한 번만 묻는다 (`createRepoLoader`: 같은 Promise를 함께 쓰고, 10분 저장도 저장소 목록 단위). 앱마다 따로 읽게 바꾸지 않는다 — 시간당 60번 한도.
 - 서비스 워커 캐시 파일 목록이나 방식을 바꾸면 `sw.js`의 `CACHE` 숫자를 올린다.
 

@@ -29,7 +29,8 @@ const TEXT_NAMES = new Set(['.gitignore', '.gitattributes', '.nojekyll']);
 const j = (...parts) => parts.join('');
 
 // 공개 저장소만 링크해도 된다 (비공개 저장소 링크 금지). 새 공개 저장소를 링크하려면 여기에 더한다.
-const PUBLIC_REPOS = new Set(['yena-day', 'yt-noraebang', 'yena-store']);
+// yetae-world = 가족 앱 설치 파일만 올리는 공개 저장소 (CR-049, 앱 코드 저장소는 비공개라 링크하지 않음)
+const PUBLIC_REPOS = new Set(['yena-day', 'yt-noraebang', 'yena-store', 'yetae-world']);
 
 const RULES = [
   { name: 'App Distribution 초대 링크', re: /app[d]istribution/i },

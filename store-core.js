@@ -8,6 +8,12 @@ export const CACHE_MAX_AGE_MS = 10 * 60 * 1000;
 export const RELEASES_PER_PAGE = 100;
 /** 태그 = 앞머리 + 숫자 12자리 (YYYYMMDDHHmm). 예: app-202610251128 */
 export const RELEASE_TAG_STAMP = /^\d{12}$/;
+/**
+ * 번호 태그 = 앞머리 + 숫자 1~9자리 (0으로 시작하지 않음). release.versionPrefix가 있는 앱만 쓴다.
+ * 예: 가족 앱 app-60 (번호 = 커밋 수 = versionCode) → 화면에는 versionPrefix를 붙여 "0.1.60".
+ * 12자리 도장은 9자리를 넘어서 두 방식이 섞이지 않는다.
+ */
+export const RELEASE_TAG_NUMBER = /^[1-9]\d{0,8}$/;
 export const KINDS = ['android-release', 'web', 'private'];
 
 // ── 주소 ──────────────────────────────────────────────
@@ -35,26 +41,44 @@ export function releasesApiUrl(repo) {
 // ── 릴리스 고르기 ─────────────────────────────────────
 
 /**
- * GitHub 릴리스 목록에서 설치 파일이 있는 가장 최근 앱 릴리스를 고른다.
+ * 이 앱의 태그인지. 맞으면 앞머리 뒤 부분, 아니면 null.
+ * - 날짜 도장 방식 (기본, versionPrefix 없음): 앞머리 + 숫자 12자리
+ * - 번호 방식 (versionPrefix가 글자): 앞머리 + 숫자 1~9자리
+ */
+export function appTagRest(tag, tagPrefix, versionPrefix) {
+  if (typeof tag !== 'string' || typeof tagPrefix !== 'string' || !tag.startsWith(tagPrefix)) return null;
+  const rest = tag.slice(tagPrefix.length);
+  const rule = typeof versionPrefix === 'string' ? RELEASE_TAG_NUMBER : RELEASE_TAG_STAMP;
+  return rule.test(rest) ? rest : null;
+}
+
+/**
+ * GitHub 릴리스 목록에서 설치 파일이 있는 가장 새 앱 릴리스를 고른다.
  * - 태그 = tagPrefix(예: "app-") + 숫자 12자리(YYYYMMDDHHmm)인 것만
  *   (voice-* 같은 다른 릴리스, 같은 저장소의 다른 앱 "app-store-…", "app-x"·"app-2026"은 무시)
- * - 초안(draft)·미리보기(prerelease) 제외
+ *   versionPrefix(예: "0.1.")가 있는 앱은 대신 tagPrefix + 번호(1~9자리)인 것만 (예: 가족 앱 "app-60")
+ * - 초안(draft)·미리보기(prerelease, 가족 앱의 시험판) 제외
  * - asset 확장자(예: ".apk") 파일이 그 저장소의 다운로드 주소로 올라가 있는 것만
- * - 그중 published_at이 가장 늦은 것 (API가 주는 순서를 믿지 않는다)
+ * - 그중 날짜 도장 방식은 published_at이 가장 늦은 것 (API가 주는 순서를 믿지 않는다),
+ *   번호 방식은 번호가 가장 큰 것 (번호 = versionCode라 안드로이드는 낮은 번호로 덮어 설치하지 못한다.
+ *   옛 번호 릴리스를 나중에 다시 정식으로 바꿔도 더 큰 번호가 이긴다 — 가족 앱 안 업데이트 확인과 같은 기준)
  * 없으면 null.
  */
-export function pickRelease(releases, { repo, tagPrefix = 'app-', asset = '.apk' } = {}) {
+export function pickRelease(releases, { repo, tagPrefix = 'app-', asset = '.apk', versionPrefix } = {}) {
   if (!Array.isArray(releases)) return null;
+  const numbered = typeof versionPrefix === 'string';
   const ext = String(asset).toLowerCase();
   const downloadBase = repo ? `https://github.com/${repo}/releases/download/` : 'https://github.com/';
   let best = null;
-  let bestTime = -Infinity;
+  let bestRank = -Infinity;
   for (const r of releases) {
     if (!r || typeof r !== 'object' || r.draft || r.prerelease) continue;
     const tag = r.tag_name;
-    if (typeof tag !== 'string' || !tag.startsWith(tagPrefix) || !RELEASE_TAG_STAMP.test(tag.slice(tagPrefix.length))) continue;
+    const rest = appTagRest(tag, tagPrefix, versionPrefix);
+    if (rest === null) continue;
     const time = Date.parse(r.published_at);
     if (!Number.isFinite(time)) continue;
+    const rank = numbered ? Number(rest) : time;
     const assets = Array.isArray(r.assets) ? r.assets : [];
     const file = assets.find(
       (a) =>
@@ -66,11 +90,11 @@ export function pickRelease(releases, { repo, tagPrefix = 'app-', asset = '.apk'
         a.browser_download_url.startsWith(downloadBase) &&
         isHttpsUrl(a.browser_download_url),
     );
-    if (!file || time <= bestTime) continue;
-    bestTime = time;
+    if (!file || rank <= bestRank) continue;
+    bestRank = rank;
     best = {
       tag,
-      version: versionFromTag(tag, tagPrefix),
+      version: versionFromTag(tag, tagPrefix, versionPrefix),
       publishedAt: new Date(time).toISOString(),
       notes: cleanNotes(r.body),
       fileUrl: file.browser_download_url,
@@ -82,10 +106,14 @@ export function pickRelease(releases, { repo, tagPrefix = 'app-', asset = '.apk'
   return best;
 }
 
-/** "app-202610251128" → "2026.10.25 11:28". 숫자 12자리 모양만 바꾸고, 그 밖은 앞머리만 뗀 그대로. */
-export function versionFromTag(tag, prefix = '') {
+/**
+ * "app-202610251128" → "2026.10.25 11:28". 숫자 12자리 모양만 바꾸고, 그 밖은 앞머리만 뗀 그대로.
+ * versionPrefix가 있으면 번호 태그에 붙인다: versionFromTag("app-60", "app-", "0.1.") → "0.1.60".
+ */
+export function versionFromTag(tag, prefix = '', versionPrefix) {
   if (typeof tag !== 'string') return '';
   const rest = prefix && tag.startsWith(prefix) ? tag.slice(prefix.length) : tag;
+  if (typeof versionPrefix === 'string' && RELEASE_TAG_NUMBER.test(rest)) return `${versionPrefix}${rest}`;
   if (!RELEASE_TAG_STAMP.test(rest)) return rest;
   return `${rest.slice(0, 4)}.${rest.slice(4, 6)}.${rest.slice(6, 8)} ${rest.slice(8, 10)}:${rest.slice(10, 12)}`;
 }
@@ -328,8 +356,8 @@ export function createRepoLoader({ fetchList, getItem, setItem, now = () => Date
 /** 저장소 목록 상태 → 이 앱의 카드 상태 (cardView에 넣는 값). 실패 표시는 앱마다 따로. */
 export function releaseStateFor(app, repoState) {
   if (!repoState || repoState.status === 'error') return { status: 'error' };
-  const { repo, tagPrefix, asset } = app.release;
-  const release = pickRelease(repoState.releases, { repo, tagPrefix, asset });
+  const { repo, tagPrefix, asset, versionPrefix } = app.release;
+  const release = pickRelease(repoState.releases, { repo, tagPrefix, asset, versionPrefix });
   if (repoState.status === 'stale') {
     return release ? { status: 'stale', release, checkedAt: repoState.checkedAt } : { status: 'error' };
   }
@@ -339,7 +367,7 @@ export function releaseStateFor(app, repoState) {
 // ── 카드에 보일 내용 ──────────────────────────────────
 
 /**
- * 앱 하나 + (캘린더면) 릴리스 상태 → 카드에 보일 글과 버튼.
+ * 앱 하나 + (android-release면) 릴리스 상태 → 카드에 보일 글과 버튼.
  * state.status: 'loading' | 'ok' | 'stale'(인터넷·API 실패, 저장해 둔 결과) | 'error'(실패, 저장한 것도 없음)
  * action.type: 'install' | 'open' | 'link' | 'loading' | 'locked'
  */
@@ -365,7 +393,8 @@ export function cardView(app, state = {}, opts = {}) {
   }
   const r = state.release;
   if ((state.status === 'ok' || state.status === 'stale') && r) {
-    view.meta = metaLine({ version: r.version, size: r.size }, opts);
+    // 날짜는 버전에 날짜가 없을 때만 보인다 (가족 앱 "버전 0.1.60 · 10월 27일 · 8.5MB", 캘린더는 버전이 날짜라 그대로)
+    view.meta = metaLine({ version: r.version, date: r.publishedAt, size: r.size }, opts);
     view.notes = r.notes || '';
     view.action = { type: 'install', label: '설치', href: r.fileUrl, newTab: false };
     if (state.status === 'stale') view.status = formatLastChecked(state.checkedAt, opts);
@@ -384,7 +413,7 @@ const KIND_KEYS = {
   web: ['url', 'version', 'date', 'notes'],
   private: [],
 };
-const RELEASE_KEYS = ['repo', 'tagPrefix', 'asset', 'fallbackUrl'];
+const RELEASE_KEYS = ['repo', 'tagPrefix', 'asset', 'fallbackUrl', 'versionPrefix'];
 
 function text(v, max) {
   return typeof v === 'string' && v.trim().length > 0 && v.length <= max && !/[\r\n]/.test(v);
@@ -431,6 +460,9 @@ export function validateApp(app) {
       }
       if (typeof r.asset !== 'string' || !/^\.[a-z0-9]+$/.test(r.asset)) errs.push('release.asset은 ".apk" 같은 확장자예요');
       if (!isHttpsUrl(r.fallbackUrl)) errs.push('release.fallbackUrl은 https 주소예요');
+      if (r.versionPrefix !== undefined && (typeof r.versionPrefix !== 'string' || !/^(?:\d{1,4}\.){1,3}$/.test(r.versionPrefix))) {
+        errs.push('release.versionPrefix(번호 태그 앞 버전)는 "0.1."처럼 숫자와 점으로 쓰고 점으로 끝나요');
+      }
     }
   }
   if (app.kind === 'web') {
