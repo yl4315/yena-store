@@ -118,6 +118,23 @@
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     },
     {
+      "id": "focus",
+      "name": "예나의 집중",
+      "short": "집중",
+      "dept": "기획조정실",
+      "icon": "icons/apps/focus.png",
+      "color": "#FDE8EE",
+      "summary": "타이머를 켜고 집중하면 포인트가 쌓여요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "focus-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
       "id": "worklog",
       "name": "예나의 일지",
       "short": "일지",
