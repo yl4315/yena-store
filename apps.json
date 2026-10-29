@@ -53,18 +53,20 @@
     },
     {
       "id": "finance",
-      "name": "YeTae-Fi 가계부",
+      "name": "예태 가계부",
       "short": "가계부",
       "dept": "재무회계팀",
       "icon": "icons/apps/finance.png",
-      "color": "#FDF0C4",
-      "summary": "계좌와 지출을 한눈에",
-      "kind": "web",
-      "url": "https://yetae-fi.vercel.app",
-      "version": "2026-09-24",
-      "date": "2026-09-24",
-      "notes": "은행 연결 상태 보기·다시 연결, 폰에서 기간 고르기",
-      "notice": "허용된 구글 계정으로만 들어가요"
+      "color": "#DBF5DF",
+      "summary": "우리 집 돈 흐름과 자산을 폰에서 봐요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "finance-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 은행 연결·다시 로그인은 웹 가계부(https://yetae-fi.vercel.app)에서 해요"
     },
     {
       "id": "packing",

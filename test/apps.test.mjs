@@ -24,7 +24,21 @@ test('apps.json: 처음 네 칸은 기존 앱 (CR-037), 새 앱은 그 뒤에 (C
   assert.equal(byId.calendar.name, '예나의 하루');
   assert.equal(byId.karaoke.name, 'YT 노래방');
   assert.equal(byId.family.name, '예태 가족'); // 앱 안 이름 (CR-022), 홈 화면 아이콘 이름은 short "가족"
-  assert.equal(byId.finance.name, 'YeTae-Fi 가계부');
+  assert.equal(byId.finance.name, '예태 가계부');
+});
+
+test('가계부 (CR-059): 앱 가게 저장소 릴리스의 finance- 태그 APK, 웹 주소는 안내에만', () => {
+  const f = byId.finance;
+  assert.equal(f.kind, 'android-release');
+  assert.equal(f.short, '가계부');
+  assert.deepEqual(f.release, {
+    repo: 'yl4315/yena-store',
+    tagPrefix: 'finance-',
+    asset: '.apk',
+    fallbackUrl: 'https://github.com/yl4315/yena-store/releases',
+  });
+  for (const k of ['url', 'version', 'date', 'notes']) assert.equal(f[k], undefined, `${k}: 버전은 GitHub에서 자동으로 읽는다`);
+  assert.match(f.notice, /https:\/\/yetae-fi\.vercel\.app/);
 });
 
 test('캘린더: GitHub 릴리스의 app- 태그 APK', () => {
@@ -68,11 +82,11 @@ test('웹앱: 주소는 https만', () => {
   assert.doesNotMatch(JSON.stringify(data), /http:\/\//);
 });
 
-test('부서 아이콘 색 (디자인 언어 3-8 icon.dept.*)', () => {
+test('아이콘 색 (디자인 언어 3-8 icon.dept.*, 가계부는 CR-060 앱 색 바질 top)', () => {
   assert.equal(byId.calendar.color, '#FDE8EE');
   assert.equal(byId.karaoke.color, '#FDDCCF');
   assert.equal(byId.family.color, '#CDEEDD');
-  assert.equal(byId.finance.color, '#FDF0C4');
+  assert.equal(byId.finance.color, '#DBF5DF');
 });
 
 // ── 규칙이 틀린 칸을 잡는지 ──────────────────────────
