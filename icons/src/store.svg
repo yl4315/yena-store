@@ -1,18 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
 <!--
-  예나 앱 스토어 아이콘 원본 (회사 아이콘 틀 2, CEO 결정 N3). 디자인실.
-  배경: 135도 그라데이션 = 패밀리 허브 icon.dept.family-hub, icon.gradient.middle, icon.gradient.end
-  가운데: 흰 카드 icon.card (캘린더 아이콘과 같은 자리·모서리: 190,200 / 644x640 / 모서리 90)
-  그림: 둥근 블록 4개를 2x2로 = 앱이 모인 곳. 블록 색 icon.block.1, 3, 4, 5. 글자 없음.
-  이 파일 = 둥근 네모(any). 꽉 찬 네모(apple-touch-icon)와 maskable은 build-store-icons.mjs가 여기서 만든다.
+  예나 앱 가게 아이콘 원본 — 회사 앱 아이콘 틀 v2 (CR-060). 만든 곳: Yena Inc. departments/design/icons/build-icons.mjs (틀·그림 원본 = yena-app-kit icons/) — 직접 고치지 말고 다시 만든다.
+  배경: 135° 그라데이션 = 토큰 icon.app.graphite.top → bottom. 그림: 쇼핑백(icon.app.graphite.ink) + 앱 색 블록 2×2.
+  이 파일 = 둥근 네모(any). 앱 가게 build-store-icons.mjs가 꽉 찬 네모·maskable을 여기서 만든다 (maskable 배율은 틀 v2 0.873 권장).
 -->
-<defs><linearGradient id="bg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1024" y2="1024"><stop offset="0" stop-color="#CDEEDD"/><stop offset="0.5" stop-color="#EEEAFE"/><stop offset="1" stop-color="#E3F5F8"/></linearGradient></defs>
+<defs><linearGradient id="bg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1024" y2="1024"><stop offset="0" stop-color="#EFF0F3"/><stop offset="1" stop-color="#DADCE2"/></linearGradient></defs>
 <rect id="back" width="1024" height="1024" rx="230" fill="url(#bg)"/>
-<g id="art">
-<rect x="190" y="200" width="644" height="640" rx="90" fill="#FFFFFF"/>
-<rect x="282" y="290" width="208" height="208" rx="52" fill="#F7BDB8"/>
-<rect x="534" y="290" width="208" height="208" rx="52" fill="#FBE7A6"/>
-<rect x="282" y="542" width="208" height="208" rx="52" fill="#C2E5CD"/>
-<rect x="534" y="542" width="208" height="208" rx="52" fill="#C3DDFA"/>
-</g>
+<g id="art"><path d="M396,440L396,336A116,116 0 0 1 628,336L628,440" fill="none" stroke="#1C1F24" stroke-width="64" stroke-linecap="round"/><path d="M314,384H710A92,92 0 0 1 802,476V740A92,92 0 0 1 710,832H314A92,92 0 0 1 222,740V476A92,92 0 0 1 314,384Z" fill="#1C1F24"/><path d="M420,492H464A32,32 0 0 1 496,524V568A32,32 0 0 1 464,600H420A32,32 0 0 1 388,568V524A32,32 0 0 1 420,492Z" fill="#FFC6BB"/><path d="M560,492H604A32,32 0 0 1 636,524V568A32,32 0 0 1 604,600H560A32,32 0 0 1 528,568V524A32,32 0 0 1 560,492Z" fill="#F7DC8B"/><path d="M420,632H464A32,32 0 0 1 496,664V708A32,32 0 0 1 464,740H420A32,32 0 0 1 388,708V664A32,32 0 0 1 420,632Z" fill="#B3E4BC"/><path d="M560,632H604A32,32 0 0 1 636,664V708A32,32 0 0 1 604,740H560A32,32 0 0 1 528,708V664A32,32 0 0 1 560,632Z" fill="#BDD8FF"/></g>
 </svg>

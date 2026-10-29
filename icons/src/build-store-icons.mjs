@@ -1,14 +1,17 @@
 #!/usr/bin/env node
-// 예나 앱 스토어 아이콘 만들기·확인 (디자인실, 회사 아이콘 틀 2 = CEO 결정 N3)
+// 예나 앱 스토어 아이콘 만들기·확인 (디자인실, 회사 앱 아이콘 틀 v2 = CR-060)
 //
 //   node icons/src/build-store-icons.mjs
 //
 // 1. icons/src/store.svg(원본) → icons/store-192.png · store-512.png (둥근 네모, 모서리 투명)
 //                                 icons/store-maskable-512.png (꽉 찬 네모, 그림은 가운데 80% 원 안)
 //                                 icons/apple-touch-icon.png (180, 꽉 찬 네모, 투명 없음) · icons/favicon-32.png
-// 2. icons/apps/*.png = 스토어 카드용 앱 아이콘 192. 각 앱의 지금 아이콘을 가져온다 (여기서 다시 그리지 않음).
-//    캘린더는 1024를 192로 줄이고, 나머지는 192 그대로 복사.
+// 2. icons/apps/*.png = 스토어 카드용 앱 아이콘 192. 디자인실이 만든 v2 그림을 가져온다 (여기서 다시 그리지 않음).
+//    캘린더는 1024를 192로 줄이고(틀 2 그대로, CR-060 4장), 나머지는 본사 icons/out/store/icons/apps/의 192 그대로 복사.
 // 3. 만든 파일의 크기·투명도·maskable 안전 구역을 확인한다. 문제가 있으면 끝 코드 1.
+//
+// CR-060부터 기준 파일은 본사 departments/design/icons/out/store/icons/ (디자인실 출력)를 그대로 덮어쓴 것.
+// 이 스크립트로 다시 만들어도 같은 그림이지만 가장자리 몇 픽셀이 다르게 나오므로, 보통은 돌리지 않고 복사한다.
 //
 // 필요: Microsoft Edge, Node 22 이상. npm 패키지 없음.
 // SVG를 PNG로 바꾸는 도구와 앱 아이콘 원본은 본사 저장소(디자인실)에 있다.
@@ -32,15 +35,16 @@ const { decodePng, encodePng, pngInfo, pixel } = await import(pathToFileURL(path
 // ── 틀 (본사 icons/build-icons.mjs FRAME과 같은 값) ──
 const S = 1024;
 const OUTER_RADIUS = 230;   // 둥근 네모 모서리
-const ADAPTIVE_SCALE = 0.82; // maskable: 그림을 가운데 기준 0.82배 (회사 노래방·가계부 maskable과 같음)
+const ADAPTIVE_SCALE = 0.873; // maskable: 그림을 가운데 기준 0.873배 (틀 v2, CR-060 6장)
 const MASK_SAFE = 0.8;       // PWA maskable 안전 구역 = 가운데 지름 80% 원
 
 // ── 앱 아이콘 원본 (본사 저장소 안 경로) ──
+const V2 = 'departments/design/icons/out/store/icons/apps'; // CR-060 틀 v2 (192)
 const APP_ICONS = {
-  calendar: 'portal/icons/calendar.png', // 1024 → 192로 줄임 (= 캘린더 assets/icon.png와 같은 파일)
-  karaoke: 'portal/icons/karaoke.png',   // 192 그대로
-  finance: 'portal/icons/finance.png',   // 192 그대로
-  family: 'departments/design/icons/out/family/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png', // CR-021 가족 아이콘 192
+  calendar: 'portal/icons/calendar.png', // 1024 → 192로 줄임 (= 캘린더 assets/icon.png와 같은 파일, 틀 2 그대로)
+  ...Object.fromEntries(
+    ['karaoke', 'family', 'finance', 'packing', 'tip', 'memo', 'focus', 'worklog', 'fridge', 'vanity', 'supplies'].map((id) => [id, `${V2}/${id}.png`]),
+  ), // 192 그대로
 };
 const APP_SIZE = 192;
 
