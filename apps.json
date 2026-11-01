@@ -137,6 +137,23 @@
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     },
     {
+      "id": "briefing",
+      "name": "예나의 브리핑",
+      "short": "브리핑",
+      "dept": "기획조정실",
+      "icon": "icons/apps/briefing.png",
+      "color": "#FDE8EE",
+      "summary": "아침마다 관심 키워드 뉴스를 3분에 훑어봐요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "briefing-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
       "id": "worklog",
       "name": "예나의 일지",
       "short": "일지",
