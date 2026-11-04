@@ -254,6 +254,23 @@
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "photoclean",
+      "name": "예나의 사진 정리",
+      "short": "사진정리",
+      "dept": "크리에이티브 랩",
+      "icon": "icons/apps/photoclean.png",
+      "color": "#FDDCCF",
+      "summary": "비슷한·흐린 사진과 스크린샷을 모아 휴지통으로 정리해요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "photoclean-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
