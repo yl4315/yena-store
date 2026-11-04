@@ -271,6 +271,23 @@
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "greencard",
+      "name": "예태 영주권",
+      "short": "영주권",
+      "dept": "인사·웰니스팀",
+      "icon": "icons/apps/greencard.png",
+      "color": "#E8D3F0",
+      "summary": "이민국 진행 단계를 가족용 한국어로 봐요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "greencard-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
