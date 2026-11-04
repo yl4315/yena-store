@@ -237,6 +237,23 @@
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "desk",
+      "name": "예나의 데스크",
+      "short": "데스크",
+      "dept": "본사",
+      "icon": "icons/apps/desk.png",
+      "color": "#EEEAFE",
+      "summary": "곧 상하는 것·사야 할 것과 월간 보고서를 한눈에",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "desk-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
