@@ -288,6 +288,23 @@
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "piano",
+      "name": "예나의 악보",
+      "short": "악보",
+      "dept": "크리에이티브 랩",
+      "icon": "icons/apps/piano.png",
+      "color": "#FDDCCF",
+      "summary": "노래 파일에서 멜로디 악보와 계이름을 만들어요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "piano-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
