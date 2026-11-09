@@ -375,3 +375,24 @@ test('토큰 파일은 디자인실 원본 그대로 (맨 위 자동 생성 주�
   assert.match(readFileSync(join(ROOT, 'tokens.css'), 'utf8'), /^\/\*\n \* 자동 생성, 직접 고치지 말 것 — 원본 departments\/design\/tokens\/tokens\.json/);
   assert.match(readFileSync(join(ROOT, 'haptics.js'), 'utf8'), /^\/\/ 자동 생성, 직접 고치지 말 것 — 원본 departments\/design\/tokens\/tokens\.json/);
 });
+
+test('도움말 "처음 설치할 때" (CR-117): 아이폰 안 됨·카카오톡 다른 브라우저·삼성 자동 차단 (모든 설치 앱에 같은 글)', () => {
+  const help = /<details class="help" id="help-install">([\s\S]*?)<\/details>/.exec(html);
+  assert.ok(help, '처음 설치할 때 칸이 없어요');
+  const steps = [...help[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => m[1].replace(/<[^>]+>/g, ''));
+  assert.match(steps[0], /안드로이드 폰 전용/);
+  assert.match(steps[0], /아이폰에는 깔 수 없어요/);
+  assert.match(steps[0], /웹앱은 아이폰에서도 열려요/);
+  assert.match(steps[1], /카카오톡/);
+  assert.match(steps[1], /다른 브라우저로 열기/);
+  const blocker = steps.find((t) => t.includes('자동 차단'));
+  assert.ok(blocker, '삼성 자동 차단 줄이 없어요');
+  assert.match(blocker, /검색해 잠깐 끄고 설치한 뒤 다시 켜도 돼요/);
+  assert.match(blocker, /폰마다 조금 달라요/);
+  // 앞에 있던 단계도 그대로
+  for (const old of ['내려받아요', '다운로드', '출처를 알 수 없는 앱', '업데이트', 'Play 프로텍트']) {
+    assert.ok(steps.some((t) => t.includes(old)), old);
+  }
+  // 특정 앱 이름이 아닌 모든 앱에 맞는 말
+  assert.doesNotMatch(help[1], /예태|가족 앱|캘린더|노래방/);
+});

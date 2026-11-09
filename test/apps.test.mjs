@@ -68,6 +68,9 @@ test('가족 앱 (CR-049): 공개 저장소 yetae-world 릴리스의 번호 태�
   // 안내: 로그인은 여전히 초대된 가족만 + 처음 설치 안내. 초대 링크·주소는 넣지 않는다
   assert.match(f.notice, /초대받은 가족만 로그인돼요/);
   assert.match(f.notice, /처음 설치할 때/);
+  // 한국 방문 준비 (CR-117): 아이폰은 안 되고, 카톡에서 안 열리면 아래 안내로
+  assert.match(f.notice, /아이폰은 안 돼요/);
+  assert.match(f.notice, /카톡에서 안 열리/);
   assert.ok(f.notice.length <= 80);
   assert.doesNotMatch(f.notice, /https?:|www\./);
   // 주소는 공개 릴리스 페이지·저장소뿐

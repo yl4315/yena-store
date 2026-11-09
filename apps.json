@@ -49,7 +49,7 @@
         "fallbackUrl": "https://github.com/yl4315/yetae-world/releases",
         "versionPrefix": "0.1."
       },
-      "notice": "안드로이드 폰 전용, 초대받은 가족만 로그인돼요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+      "notice": "안드로이드 폰 전용(아이폰은 안 돼요), 초대받은 가족만 로그인돼요. 카톡에서 안 열리거나 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     },
     {
       "id": "finance",
