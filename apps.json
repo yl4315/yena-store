@@ -305,6 +305,23 @@
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "assistant",
+      "name": "예나의 비서",
+      "short": "비서",
+      "dept": "기획조정실",
+      "icon": "icons/apps/assistant.png",
+      "color": "#FDE8EE",
+      "summary": "말로 묻고, 할 일을 넣어 주는 집 AI 비서",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "assistant-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
