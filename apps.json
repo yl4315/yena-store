@@ -155,12 +155,12 @@
     },
     {
       "id": "worklog",
-      "name": "예나의 일지",
-      "short": "일지",
+      "name": "예나의 일기",
+      "short": "일기",
       "dept": "인사·웰니스팀",
       "icon": "icons/apps/worklog.png",
       "color": "#E8D3F0",
-      "summary": "오늘 한 일 3줄을 이력서 문장으로 바꿔요",
+      "summary": "말로 쓰고 태그로 골라 보는 일기",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
