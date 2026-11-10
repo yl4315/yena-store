@@ -104,12 +104,12 @@
     },
     {
       "id": "memo",
-      "name": "예나의 메모함",
-      "short": "메모함",
+      "name": "예나의 할 일",
+      "short": "할 일",
       "dept": "기획조정실",
       "icon": "icons/apps/memo.png",
       "color": "#FDE8EE",
-      "summary": "공유하면 바로 저장되는 링크·글 보관함",
+      "summary": "할 일 리스트·날짜별 할 일·위젯 (옛 메모도 그대로)",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
