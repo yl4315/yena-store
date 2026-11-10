@@ -322,6 +322,23 @@
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
       "notice": "안드로이드 폰 전용이에요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+    },
+    {
+      "id": "couple",
+      "name": "예태 부부회의",
+      "short": "부부회의",
+      "dept": "패밀리 허브",
+      "icon": "icons/apps/couple.png",
+      "color": "#CDEEDD",
+      "summary": "둘이 이야기하고 할 일을 정리해요",
+      "kind": "android-release",
+      "release": {
+        "repo": "yl4315/yena-store",
+        "tagPrefix": "couple-",
+        "asset": ".apk",
+        "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
+      },
+      "notice": "안드로이드 폰 전용이에요. 녹음 정리는 집 AI에 닿는 폰에서만 돼요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
