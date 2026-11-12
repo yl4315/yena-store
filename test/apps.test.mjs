@@ -200,7 +200,7 @@ test('검사: 틀린 앱만 빼고 나머지는 그린다', () => {
 
 // ── 쉬는 앱 숨기기 (CR-178) ──────────────────────────
 
-const HIDDEN_IDS = ['tip', 'briefing', 'desk'];
+const HIDDEN_IDS = ['tip', 'briefing', 'desk', 'greencard']; // greencard: CEO 11-12 밤 무기한 홀드
 
 test('검사: hidden은 true나 false만 (있으면), 아니면 틀린 칸', () => {
   for (const hidden of [true, false]) {
@@ -240,14 +240,14 @@ test('hidden: false는 보이는 앱 (검사 통과, validateApps·visibleApps�
   assert.deepEqual(visibleApps(apps).map((a) => a.id), ['a', 'c']);
 });
 
-test('apps.json: 쉬는 앱 3개(desk·briefing·tip)만 숨기고, 보이는 앱은 20 − 3 = 17', () => {
+test('apps.json: 쉬는 앱 4개(desk·briefing·tip·greencard)만 숨기고, 보이는 앱은 20 − 4 = 16', () => {
   assert.equal(data.apps.length, 20);
   assert.deepEqual(data.apps.filter((a) => 'hidden' in a).map((a) => a.id).sort(), [...HIDDEN_IDS].sort());
   const { apps } = validateApps(data);
   const shown = visibleApps(apps).map((a) => a.id);
-  assert.equal(shown.length, 17);
+  assert.equal(shown.length, 16);
   for (const id of HIDDEN_IDS) assert.ok(!shown.includes(id), `${id}는 가게에 안 보인다`);
-  // 나머지 17개는 apps.json 순서 그대로
+  // 나머지 16개는 apps.json 순서 그대로
   assert.deepEqual(shown, data.apps.map((a) => a.id).filter((id) => !HIDDEN_IDS.includes(id)));
 });
 

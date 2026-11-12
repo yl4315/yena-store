@@ -277,6 +277,7 @@
     },
     {
       "id": "greencard",
+      "hidden": true,
       "name": "예태 영주권",
       "short": "영주권",
       "dept": "인사·웰니스팀",
