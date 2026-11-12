@@ -10,7 +10,7 @@
 // - GitHub가 안 되면(인터넷 끊김·한도 초과·8초 넘게 답 없음) 앱마다: 저장해 둔 목록에서 고른 결과 + "마지막 확인 ○시 ○분",
 //   저장한 것도 없거나 그 앱 릴리스가 없으면 "GitHub에서 보기" 버튼(릴리스 페이지)으로 바꾼다.
 // - localStorage가 막힌 브라우저(사생활 보호 창 등)에서는 저장 없이 화면을 열 때마다 묻는다.
-import { cardView, createRepoLoader, releaseStateFor, validateApps } from './store-core.js';
+import { cardView, createRepoLoader, releaseStateFor, validateApps, visibleApps } from './store-core.js';
 
 const FETCH_TIMEOUT_MS = 8000;
 const $ = (sel) => document.querySelector(sel);
@@ -197,8 +197,9 @@ async function loadApps() {
     showListMessage('앱 목록을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 해 봐요.', true);
     return;
   }
-  const { apps, errors } = validateApps(data);
+  const { apps: valid, errors } = validateApps(data);
   if (errors.length) console.warn('apps.json에서 고칠 점 (이 앱은 화면에서 뺐어요):', errors);
+  const apps = visibleApps(valid); // 쉬는 앱(hidden)은 카드도 그리지 않고 릴리스도 묻지 않는다 (CR-178)
   if (!apps.length) {
     showListMessage('보여 줄 앱이 없어요.', false);
     return;

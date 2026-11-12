@@ -3,7 +3,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { validateApp, validateApps } from '../store-core.js';
+import { validateApp, validateApps, visibleApps } from '../store-core.js';
 
 const data = JSON.parse(readFileSync(new URL('../apps.json', import.meta.url), 'utf8'));
 const byId = Object.fromEntries(data.apps.map((a) => [a.id, a]));
@@ -196,4 +196,78 @@ test('검사: 틀린 앱만 빼고 나머지는 그린다', () => {
   assert.ok(errors.length >= 2);
   assert.ok(validateApps(null).errors.length > 0);
   assert.ok(validateApps({ apps: [] }).errors.length > 0);
+});
+
+// ── 쉬는 앱 숨기기 (CR-178) ──────────────────────────
+
+const HIDDEN_IDS = ['tip', 'briefing', 'desk'];
+
+test('검사: hidden은 true만 (있으면), 아니면 틀린 칸', () => {
+  assert.deepEqual(validateApp({ ...AND, hidden: true }), []);
+  assert.deepEqual(validateApp({ ...WEB, hidden: true }), []);
+  assert.deepEqual(validateApp({ ...PRIV, hidden: true }), []);
+  for (const hidden of ['yes', 'true', false, 0, 1, null, [], {}]) {
+    assert.ok(has(validateApp({ ...AND, hidden }), /hidden/), JSON.stringify(hidden));
+  }
+  // 틀린 hidden 칸이 있는 앱은 validateApps에서 빠진다 (다른 앱은 그대로)
+  const { errors, apps } = validateApps({ apps: [WEB, { ...AND, id: 'x', hidden: 'yes' }] });
+  assert.deepEqual(apps.map((a) => a.id), ['demo']);
+  assert.ok(errors.some((e) => /^x: hidden/.test(e)));
+});
+
+test('visibleApps: hidden: true인 앱만 빼고 순서는 그대로', () => {
+  const list = [
+    { ...WEB, id: 'a' },
+    { ...AND, id: 'b', hidden: true },
+    { ...PRIV, id: 'c' },
+    { ...AND, id: 'd', hidden: true },
+    { ...AND, id: 'e' },
+  ];
+  assert.deepEqual(visibleApps(list).map((a) => a.id), ['a', 'c', 'e']);
+  assert.equal(list.length, 5, '원래 목록은 그대로');
+  assert.deepEqual(visibleApps([]), []);
+  assert.deepEqual(visibleApps(null), []);
+  assert.deepEqual(visibleApps(undefined), []);
+});
+
+test('apps.json: 쉬는 앱 3개(desk·briefing·tip)만 숨기고, 보이는 앱은 20 − 3 = 17', () => {
+  assert.equal(data.apps.length, 20);
+  assert.deepEqual(data.apps.filter((a) => 'hidden' in a).map((a) => a.id).sort(), [...HIDDEN_IDS].sort());
+  const { apps } = validateApps(data);
+  const shown = visibleApps(apps).map((a) => a.id);
+  assert.equal(shown.length, 17);
+  for (const id of HIDDEN_IDS) assert.ok(!shown.includes(id), `${id}는 가게에 안 보인다`);
+  // 나머지 17개는 apps.json 순서 그대로
+  assert.deepEqual(shown, data.apps.map((a) => a.id).filter((id) => !HIDDEN_IDS.includes(id)));
+});
+
+test('apps.json: 숨긴 앱도 칸은 망가지지 않았다 (검사 통과, 릴리스·아이콘 그대로 → hidden만 빼면 다시 보임)', () => {
+  for (const id of HIDDEN_IDS) {
+    const a = byId[id];
+    assert.equal(a.hidden, true, id);
+    assert.deepEqual(validateApp(a), [], id);
+    assert.equal(a.kind, 'android-release', id);
+    assert.deepEqual(a.release, {
+      repo: 'yl4315/yena-store',
+      tagPrefix: `${id}-`,
+      asset: '.apk',
+      fallbackUrl: 'https://github.com/yl4315/yena-store/releases',
+    });
+    assert.equal(a.icon, `icons/apps/${id}.png`, id);
+    const { hidden: _h, ...shownAgain } = a;
+    assert.deepEqual(validateApp(shownAgain), [], `${id}: hidden을 빼도 통과`);
+    assert.deepEqual(visibleApps([shownAgain]).map((x) => x.id), [id]);
+  }
+});
+
+test('화면 (app.js): 보이는 앱만 카드를 그리고, 그 앱만 릴리스를 묻는다', () => {
+  const src = readFileSync(new URL('../app.js', import.meta.url), 'utf8');
+  assert.match(src, /import \{[^}]*\bvisibleApps\b[^}]*\} from '\.\/store-core\.js';/);
+  const load = src.slice(src.indexOf('async function loadApps()'), src.indexOf('// ── 테마'));
+  const filtered = load.indexOf('const apps = visibleApps(valid);');
+  assert.ok(filtered > 0, 'validateApps 결과를 visibleApps로 거른다');
+  assert.ok(load.indexOf('for (const app of apps)') > filtered, '카드 그리기·릴리스 묻기는 거른 목록으로');
+  // 릴리스는 그린 카드(releaseCards)에서만 묻는다
+  assert.equal((src.match(/refreshRelease\(/g) || []).length, 3, 'refreshRelease: 정의 + loadApps + 돌아왔을 때');
+  assert.match(src, /releaseCards\.forEach\(\(p\) => refreshRelease\(p, \{ showLoading: false \}\)\)/);
 });

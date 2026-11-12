@@ -87,6 +87,7 @@
     },
     {
       "id": "tip",
+      "hidden": true,
       "name": "예태 팁계산",
       "short": "팁계산",
       "dept": "재무회계팀",
@@ -138,6 +139,7 @@
     },
     {
       "id": "briefing",
+      "hidden": true,
       "name": "예나의 브리핑",
       "short": "브리핑",
       "dept": "기획조정실",
@@ -240,6 +242,7 @@
     },
     {
       "id": "desk",
+      "hidden": true,
       "name": "예나의 데스크",
       "short": "데스크",
       "dept": "본사",
