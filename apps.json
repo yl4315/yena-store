@@ -8,7 +8,7 @@
       "dept": "기획조정실",
       "icon": "icons/apps/calendar.png",
       "color": "#FDE8EE",
-      "summary": "일정·습관·일기·루틴을 한 곳에, 말로도 기록해요",
+      "summary": "일정·루틴·습관·기념일을 한 곳에, 말로도 기록해요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-day",
