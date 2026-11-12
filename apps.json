@@ -20,6 +20,7 @@
     },
     {
       "id": "karaoke",
+      "hidden": true,
       "name": "YT 노래방",
       "short": "노래방",
       "dept": "크리에이티브 랩",
@@ -70,6 +71,7 @@
     },
     {
       "id": "packing",
+      "hidden": true,
       "name": "예나의 여행",
       "short": "여행",
       "dept": "인사·웰니스팀",
@@ -122,6 +124,7 @@
     },
     {
       "id": "focus",
+      "hidden": true,
       "name": "예나의 집중",
       "short": "집중",
       "dept": "기획조정실",
@@ -260,6 +263,7 @@
     },
     {
       "id": "photoclean",
+      "hidden": true,
       "name": "예나의 사진 정리",
       "short": "사진정리",
       "dept": "크리에이티브 랩",
@@ -295,6 +299,7 @@
     },
     {
       "id": "piano",
+      "hidden": true,
       "name": "예나의 악보",
       "short": "악보",
       "dept": "크리에이티브 랩",

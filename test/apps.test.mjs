@@ -200,7 +200,7 @@ test('검사: 틀린 앱만 빼고 나머지는 그린다', () => {
 
 // ── 쉬는 앱 숨기기 (CR-178) ──────────────────────────
 
-const HIDDEN_IDS = ['tip', 'briefing', 'desk', 'greencard']; // greencard: CEO 11-12 밤 무기한 홀드
+const HIDDEN_IDS = ['tip', 'briefing', 'desk', 'greencard', 'karaoke', 'packing', 'focus', 'photoclean', 'piano']; // greencard: CEO 11-12 밤 무기한 홀드 · 나머지 5개: CEO 11-12 밤 4+1 체제 (CR-192)
 
 test('검사: hidden은 true나 false만 (있으면), 아니면 틀린 칸', () => {
   for (const hidden of [true, false]) {
@@ -240,14 +240,14 @@ test('hidden: false는 보이는 앱 (검사 통과, validateApps·visibleApps�
   assert.deepEqual(visibleApps(apps).map((a) => a.id), ['a', 'c']);
 });
 
-test('apps.json: 쉬는 앱 4개(desk·briefing·tip·greencard)만 숨기고, 보이는 앱은 20 − 4 = 16', () => {
+test('apps.json: 쉬는 앱 9개(desk·briefing·tip·greencard + 4+1 밖 5개)만 숨기고, 보이는 앱은 20 − 9 = 11', () => {
   assert.equal(data.apps.length, 20);
   assert.deepEqual(data.apps.filter((a) => 'hidden' in a).map((a) => a.id).sort(), [...HIDDEN_IDS].sort());
   const { apps } = validateApps(data);
   const shown = visibleApps(apps).map((a) => a.id);
-  assert.equal(shown.length, 16);
+  assert.equal(shown.length, 11);
   for (const id of HIDDEN_IDS) assert.ok(!shown.includes(id), `${id}는 가게에 안 보인다`);
-  // 나머지 16개는 apps.json 순서 그대로
+  // 나머지 11개는 apps.json 순서 그대로
   assert.deepEqual(shown, data.apps.map((a) => a.id).filter((id) => !HIDDEN_IDS.includes(id)));
 });
 
@@ -256,6 +256,11 @@ test('apps.json: 숨긴 앱도 칸은 망가지지 않았다 (검사 통과, 릴
     const a = byId[id];
     assert.equal(a.hidden, true, id);
     assert.deepEqual(validateApp(a), [], id);
+    if (id === 'karaoke') {
+      // 노래방은 웹 앱: 릴리스 칸이 없고 web 칸만 그대로
+      assert.equal(a.kind, 'web', id);
+      assert.ok(a.url, id);
+    } else {
     assert.equal(a.kind, 'android-release', id);
     assert.deepEqual(a.release, {
       repo: 'yl4315/yena-store',
@@ -263,6 +268,7 @@ test('apps.json: 숨긴 앱도 칸은 망가지지 않았다 (검사 통과, 릴
       asset: '.apk',
       fallbackUrl: 'https://github.com/yl4315/yena-store/releases',
     });
+    }
     assert.equal(a.icon, `icons/apps/${id}.png`, id);
     const { hidden: _h, ...shownAgain } = a;
     assert.deepEqual(validateApp(shownAgain), [], `${id}: hidden을 빼도 통과`);
