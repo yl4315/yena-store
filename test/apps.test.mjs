@@ -202,11 +202,13 @@ test('검사: 틀린 앱만 빼고 나머지는 그린다', () => {
 
 const HIDDEN_IDS = ['tip', 'briefing', 'desk'];
 
-test('검사: hidden은 true만 (있으면), 아니면 틀린 칸', () => {
-  assert.deepEqual(validateApp({ ...AND, hidden: true }), []);
-  assert.deepEqual(validateApp({ ...WEB, hidden: true }), []);
-  assert.deepEqual(validateApp({ ...PRIV, hidden: true }), []);
-  for (const hidden of ['yes', 'true', false, 0, 1, null, [], {}]) {
+test('검사: hidden은 true나 false만 (있으면), 아니면 틀린 칸', () => {
+  for (const hidden of [true, false]) {
+    assert.deepEqual(validateApp({ ...AND, hidden }), [], String(hidden));
+    assert.deepEqual(validateApp({ ...WEB, hidden }), [], String(hidden));
+    assert.deepEqual(validateApp({ ...PRIV, hidden }), [], String(hidden));
+  }
+  for (const hidden of ['yes', 'true', 'false', 0, 1, null, [], {}]) {
     assert.ok(has(validateApp({ ...AND, hidden }), /hidden/), JSON.stringify(hidden));
   }
   // 틀린 hidden 칸이 있는 앱은 validateApps에서 빠진다 (다른 앱은 그대로)
@@ -228,6 +230,14 @@ test('visibleApps: hidden: true인 앱만 빼고 순서는 그대로', () => {
   assert.deepEqual(visibleApps([]), []);
   assert.deepEqual(visibleApps(null), []);
   assert.deepEqual(visibleApps(undefined), []);
+});
+
+test('hidden: false는 보이는 앱 (검사 통과, validateApps·visibleApps에 남는다)', () => {
+  const list = { apps: [{ ...WEB, id: 'a', hidden: false }, { ...AND, id: 'b', hidden: true }, { ...PRIV, id: 'c', hidden: false }] };
+  const { errors, apps } = validateApps(list);
+  assert.deepEqual(errors, []);
+  assert.deepEqual(apps.map((a) => a.id), ['a', 'b', 'c']);
+  assert.deepEqual(visibleApps(apps).map((a) => a.id), ['a', 'c']);
 });
 
 test('apps.json: 쉬는 앱 3개(desk·briefing·tip)만 숨기고, 보이는 앱은 20 − 3 = 17', () => {

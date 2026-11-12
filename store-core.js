@@ -407,7 +407,7 @@ export function cardView(app, state = {}, opts = {}) {
 
 // ── apps.json 검사 ────────────────────────────────────
 
-// hidden: 쉬는 앱 (CR-178). true면 가게 화면에서 빼고 릴리스도 묻지 않는다. 칸·아이콘·릴리스는 그대로 둔다.
+// hidden: 쉬는 앱 (CR-178). true면 가게 화면에서 빼고 릴리스도 묻지 않는다, false면 보인다. 칸·아이콘·릴리스는 그대로 둔다.
 const COMMON_KEYS = ['id', 'name', 'short', 'dept', 'icon', 'color', 'summary', 'kind', 'notice', 'hidden'];
 const KIND_KEYS = {
   'android-release': ['release'],
@@ -449,7 +449,7 @@ export function validateApp(app) {
   }
   if (typeof app.color !== 'string' || !/^#[0-9A-Fa-f]{6}$/.test(app.color)) errs.push('color는 #RRGGBB 모양이에요');
   if (app.notice !== undefined && !text(app.notice, 80)) errs.push('notice(안내)는 한 줄, 80자까지');
-  if (app.hidden !== undefined && app.hidden !== true) errs.push('hidden(쉬는 앱)은 true만 써요. 보이게 하려면 칸을 빼요');
+  if (app.hidden !== undefined && typeof app.hidden !== 'boolean') errs.push('hidden(쉬는 앱)은 true나 false만 써요 (true = 숨김)');
 
   if (app.kind === 'android-release') {
     const r = app.release;
