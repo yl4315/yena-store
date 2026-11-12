@@ -228,7 +228,7 @@
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/receipt.png",
       "color": "#CDEBFA",
-      "summary": "영수증을 찍으면 냉장고에 채워 줘요",
+      "summary": "영수증을 찍으면 냉장고에 채우고, 총액은 가계부로 보내요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
