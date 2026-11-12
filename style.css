@@ -243,6 +243,12 @@ b { font-weight: var(--font-weight-bold); }
   padding: 0 0 var(--space-card) 1.4em;
   font: var(--font-body-small);
 }
+/* 단계 다음에 따로 한 줄 (CR-189 FK-7 "막히면: 삼성 자동 차단"): 단계 번호 밖이라 왼쪽은 제목에 맞춘다 */
+.help-note {
+  margin: 0;
+  padding: 0 0 var(--space-card);
+  font: var(--font-body-small);
+}
 
 /* 테마 고르기: 캘린더 설정 "화면 > 테마"와 같은 모양.
  * 면 카드 안에 이름(15/600) + 칩 3개. 칩 = 바탕색 + 얇은 테두리, 고른 칩 = color.accent (C4) */
