@@ -177,12 +177,12 @@
     },
     {
       "id": "fridge",
-      "name": "예태 냉장고",
+      "name": "스마트 살림",
       "short": "냉장고",
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/fridge.png",
       "color": "#CDEBFA",
-      "summary": "먼저 상하는 것부터 보이고, 떨어지면 장보기에 올라가요",
+      "summary": "냉장고·장보기·화장대·소모품을 한 앱에서",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
