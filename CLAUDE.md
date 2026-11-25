@@ -18,7 +18,7 @@ Yena Inc. 앱을 받고 여는 정적 웹앱. GitHub Pages(`main` 맨 위 폴더
 - 빌드·npm 패키지 없이 간다. 화면은 `tokens.css` 변수만 쓰고 회사 디자인 기준(캘린더 "예나의 하루")을 따른다.
 - CSP 때문에 인라인 스크립트·스타일·`onclick=`을 쓰지 않는다. 바깥에서 온 글(릴리스 설명 등)은 `textContent`로만 넣는다.
 - GitHub 릴리스는 `/releases/latest`를 쓰지 않는다 (같은 저장소의 "Latest"는 음성 모델). 태그는 앞머리 + 숫자 12자리(게시 시각이 가장 늦은 것), `release.versionPrefix`가 있는 앱만 앞머리 + 번호 1~9자리(번호가 가장 큰 것, 가족 앱 `app-60` → "0.1.60"). 시험판·초안은 뺀다 (`store-core.js`의 `pickRelease`).
-- GitHub API는 저장소마다 한 번만 묻는다 (`createRepoLoader`: 같은 Promise를 함께 쓰고, 10분 저장도 저장소 목록 단위). 앱마다 따로 읽게 바꾸지 않는다 — 시간당 60번 한도.
+- GitHub API는 저장소마다 한 번만 묻는다 (`createRepoLoader`: 같은 Promise를 함께 쓰고, 10분 저장도 저장소 목록 단위). 앱마다 따로 읽게 바꾸지 않는다 — 시간당 60번 한도. 예외 하나 (CR-255): 1쪽 100개가 꽉 찼는데 화면에 그릴 앱 중 못 찾은 앱이 있을 때만 같은 Promise 안에서 2쪽을 한 번 더 (저장소당 최대 2번, 3쪽 없음).
 - 서비스 워커 캐시 파일 목록이나 방식을 바꾸면 `sw.js`의 `CACHE` 숫자를 올린다.
 
 ## 확인

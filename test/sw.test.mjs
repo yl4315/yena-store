@@ -1,8 +1,11 @@
 // CR-255 6-3 KIT-11 느린 망: sw.js를 vm에 넣고 가짜 self·caches·fetch·시계로 돌린다 (설치 0, 진짜 네트워크 0).
-import { test } from 'node:test';
+import { test as nodeTest } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+
+// 타이머를 잘못 바꾸면 답이 영영 안 와서 시험이 멈출 수 있다 → 5초 넘으면 실패로
+const test = (name, fn) => nodeTest(name, { timeout: 5000 }, fn);
 
 const SRC = readFileSync(new URL('../sw.js', import.meta.url), 'utf8');
 const SCOPE = 'https://store.example.test/yena-store/';
