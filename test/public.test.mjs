@@ -403,3 +403,14 @@ test('도움말 "처음 설치할 때" (CR-117, CR-189 순서): 아이폰 안 �
   // 특정 앱 이름이 아닌 모든 앱에 맞는 말
   assert.doesNotMatch(help[1], /예태|가족 앱|캘린더|노래방/);
 });
+
+test('도움말 "처음 설치할 때" (CR-255 KIT-06): "막히면:" 다음 줄에 "지우지 말고 알려 주세요" (A 새 버전 창과 글자까지 같은 글)', () => {
+  const help = /<details class="help" id="help-install">([\s\S]*?)<\/details>/.exec(html)[1];
+  const notes = [...help.matchAll(/<p class="help-note">([\s\S]*?)<\/p>/g)].map((m) => m[1].replace(/<[^>]+>/g, ''));
+  assert.equal(notes.length, 2, '"막히면:" 줄 + 지우지 마세요 줄');
+  assert.match(notes[0], /^막히면:/, '첫 help-note는 그대로 "막히면:"');
+  assert.equal(notes[1], '설치가 안 된다고 나오면 앱을 지우지 말고 알려 주세요. 지우면 이 폰의 기록이 사라져요.');
+  // 단계(7)는 그대로, 새 줄은 단계 밖
+  assert.equal([...help.matchAll(/<li>/g)].length, 7);
+  assert.ok(help.indexOf('지우지 말고') > help.indexOf('</ol>'));
+});
