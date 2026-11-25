@@ -8,7 +8,7 @@
       "dept": "기획조정실",
       "icon": "icons/apps/calendar.png",
       "color": "#FDE8EE",
-      "summary": "일정·루틴·습관·기념일을 한 곳에, 말로도 기록해요",
+      "summary": "일정·루틴·할 일·일기·비서·부부회의를 한 앱에서",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-day",
@@ -20,7 +20,6 @@
     },
     {
       "id": "karaoke",
-      "hidden": true,
       "name": "YT 노래방",
       "short": "노래방",
       "dept": "크리에이티브 랩",
@@ -29,10 +28,10 @@
       "summary": "유튜브 MR로 부르고 가사·녹음·점수까지",
       "kind": "web",
       "url": "https://yl4315.github.io/yt-noraebang/",
-      "version": "2026-10-24",
-      "date": "2026-10-24",
-      "notes": "Drive 폴더에 직접 넣은 MR을 곡 목록으로 가져와요",
-      "notice": "휴대폰 리모컨은 집 PC에서 노래방 서버를 켰을 때만 돼요"
+      "version": "2026-11-24",
+      "date": "2026-11-24",
+      "notes": "유튜브 곡도 넣어 부를 수 있어요 (퍼가기를 막은 영상은 못 틀어요)\n손님은 QR을 찍어 자기 폰으로 곡을 예약해요\n집 AI로 MR을 만들고 가사를 노래에 맞춰요\n녹음은 작은 파일로 나눠 공유해요\n내 폰을 리모컨으로 써요 (다른 와이파이에서도)",
+      "notice": "내 폰 리모컨은 PC 노래방 설정에서 [폰 리모컨 받기]를 켜고, 로그인한 폰으로 해요"
     },
     {
       "id": "family",
@@ -112,7 +111,7 @@
       "dept": "기획조정실",
       "icon": "icons/apps/memo.png",
       "color": "#FDE8EE",
-      "summary": "할 일 리스트·메모·위젯",
+      "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '할 일'을 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -165,7 +164,7 @@
       "dept": "인사·웰니스팀",
       "icon": "icons/apps/worklog.png",
       "color": "#E8D3F0",
-      "summary": "말로 쓰고 태그로 골라 보는 일기",
+      "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '일기'를 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -199,7 +198,7 @@
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/vanity.png",
       "color": "#CDEBFA",
-      "summary": "뜯은 날부터 사용기한을 세고, 다 쓰면 사야 할 것에 올라가요",
+      "summary": "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -216,7 +215,7 @@
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/supplies.png",
       "color": "#CDEBFA",
-      "summary": "바꿀 날이 다가오면 미리 알려 주고, 주문할 날도 챙겨요",
+      "summary": "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -233,7 +232,7 @@
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/receipt.png",
       "color": "#CDEBFA",
-      "summary": "영수증을 찍으면 냉장고에 채우고, 총액은 가계부로 보내요",
+      "summary": "옛 앱이에요. 지우지 말고 '예태 가계부' 안에서 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -322,7 +321,7 @@
       "dept": "기획조정실",
       "icon": "icons/apps/assistant.png",
       "color": "#FDE8EE",
-      "summary": "말로 묻고, 할 일을 넣어 주는 집 AI 비서",
+      "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '비서'를 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -339,7 +338,7 @@
       "dept": "패밀리 허브",
       "icon": "icons/apps/couple.png",
       "color": "#CDEEDD",
-      "summary": "둘이 이야기하고 할 일을 정리해요",
+      "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '부부회의'를 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",

@@ -200,7 +200,7 @@ test('검사: 틀린 앱만 빼고 나머지는 그린다', () => {
 
 // ── 쉬는 앱 숨기기 (CR-178) ──────────────────────────
 
-const HIDDEN_IDS = ['tip', 'briefing', 'desk', 'greencard', 'karaoke', 'packing', 'focus', 'photoclean', 'piano']; // greencard: CEO 11-12 밤 무기한 홀드 · 나머지 5개: CEO 11-12 밤 4+1 체제 (CR-192)
+const HIDDEN_IDS = ['tip', 'briefing', 'desk', 'greencard', 'packing', 'focus', 'photoclean', 'piano']; // greencard: CEO 11-12 밤 무기한 홀드 · 나머지 4개: CEO 11-12 밤 4+1 체제 (CR-192) · 노래방은 CR-255에서 다시 보임
 
 test('검사: hidden은 true나 false만 (있으면), 아니면 틀린 칸', () => {
   for (const hidden of [true, false]) {
@@ -240,14 +240,14 @@ test('hidden: false는 보이는 앱 (검사 통과, validateApps·visibleApps�
   assert.deepEqual(visibleApps(apps).map((a) => a.id), ['a', 'c']);
 });
 
-test('apps.json: 쉬는 앱 9개(desk·briefing·tip·greencard + 4+1 밖 5개)만 숨기고, 보이는 앱은 20 − 9 = 11', () => {
+test('apps.json: 쉬는 앱 8개(desk·briefing·tip·greencard + 4+1 밖 4개)만 숨기고, 보이는 앱은 20 − 8 = 12 (노래방은 CR-255에서 다시 보임)', () => {
   assert.equal(data.apps.length, 20);
   assert.deepEqual(data.apps.filter((a) => 'hidden' in a).map((a) => a.id).sort(), [...HIDDEN_IDS].sort());
   const { apps } = validateApps(data);
   const shown = visibleApps(apps).map((a) => a.id);
-  assert.equal(shown.length, 11);
+  assert.equal(shown.length, 12);
   for (const id of HIDDEN_IDS) assert.ok(!shown.includes(id), `${id}는 가게에 안 보인다`);
-  // 나머지 11개는 apps.json 순서 그대로
+  // 나머지 12개는 apps.json 순서 그대로
   assert.deepEqual(shown, data.apps.map((a) => a.id).filter((id) => !HIDDEN_IDS.includes(id)));
 });
 
@@ -256,11 +256,6 @@ test('apps.json: 숨긴 앱도 칸은 망가지지 않았다 (검사 통과, 릴
     const a = byId[id];
     assert.equal(a.hidden, true, id);
     assert.deepEqual(validateApp(a), [], id);
-    if (id === 'karaoke') {
-      // 노래방은 웹 앱: 릴리스 칸이 없고 web 칸만 그대로
-      assert.equal(a.kind, 'web', id);
-      assert.ok(a.url, id);
-    } else {
     assert.equal(a.kind, 'android-release', id);
     assert.deepEqual(a.release, {
       repo: 'yl4315/yena-store',
@@ -268,7 +263,6 @@ test('apps.json: 숨긴 앱도 칸은 망가지지 않았다 (검사 통과, 릴
       asset: '.apk',
       fallbackUrl: 'https://github.com/yl4315/yena-store/releases',
     });
-    }
     assert.equal(a.icon, `icons/apps/${id}.png`, id);
     const { hidden: _h, ...shownAgain } = a;
     assert.deepEqual(validateApp(shownAgain), [], `${id}: hidden을 빼도 통과`);
@@ -286,4 +280,68 @@ test('화면 (app.js): 보이는 앱만 카드를 그리고, 그 앱만 릴리�
   // 릴리스는 그린 카드(releaseCards)에서만 묻는다
   assert.equal((src.match(/refreshRelease\(/g) || []).length, 3, 'refreshRelease: 정의 + loadApps + 돌아왔을 때');
   assert.match(src, /releaseCards\.forEach\(\(p\) => refreshRelease\(p, \{ showLoading: false \}\)\)/);
+});
+
+// ── CR-255 가게 글 (KIT-12 옛 앱 · X-11 노래방) ──────────
+
+// 옛 앱 7개: 숨기지 않고 "옛 앱이에요. 지우지 말고 …" 꼴 (팀장 앱 검토 G-11 · 디자인실 1장). 새 앱 이름은 가게 카드 이름 그대로
+const OLD_APPS = {
+  memo: "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '할 일'을 써요",
+  worklog: "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '일기'를 써요",
+  assistant: "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '비서'를 써요",
+  couple: "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '부부회의'를 써요",
+  vanity: "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
+  supplies: "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
+  receipt: "옛 앱이에요. 지우지 말고 '예태 가계부' 안에서 써요",
+};
+
+test('옛 앱 7개 (CR-255 KIT-12): "옛 앱이에요."로 시작 + "지우지 말고" + 40자 안, 숨기지 않고 설치 칸 그대로', () => {
+  const { apps } = validateApps(data);
+  const shown = visibleApps(apps).map((a) => a.id);
+  const names = new Set(data.apps.map((a) => a.name));
+  for (const [id, summary] of Object.entries(OLD_APPS)) {
+    const a = byId[id];
+    assert.equal(a.summary, summary, id);
+    assert.ok(a.summary.startsWith('옛 앱이에요.'), id);
+    assert.ok(a.summary.includes('지우지 말고'), id);
+    assert.ok(a.summary.length <= 40, `${id}: ${a.summary.length}자`);
+    assert.equal('hidden' in a, false, `${id}: 숨기지 않는다`);
+    assert.deepEqual(validateApp(a), [], id);
+    assert.ok(shown.includes(id), `${id}는 가게에 보인다`);
+    // 지금처럼 받아서 깔 수 있다: 이 저장소 릴리스의 자기 앞머리 APK
+    assert.equal(a.kind, 'android-release', id);
+    assert.equal(a.release.tagPrefix, `${id}-`, id);
+    // 가리키는 새 앱 이름은 가게 카드 이름 그대로
+    const target = /'([^']+)' 안/.exec(a.summary)[1];
+    assert.ok(names.has(target), `${id}: '${target}' 카드가 있다`);
+  }
+  // '안전망'은 회사 안 말이라 가게 글에 안 쓴다
+  assert.doesNotMatch(JSON.stringify(data), /안전망/);
+});
+
+test('캘린더 "예나의 하루" 소개 (CR-255): 할 일·일기·비서·부부회의가 한 앱에', () => {
+  const s = byId.calendar.summary;
+  assert.equal(s, '일정·루틴·할 일·일기·비서·부부회의를 한 앱에서');
+  for (const w of ['비서', '할 일', '일기', '부부회의']) assert.ok(s.includes(w), w);
+});
+
+test('노래방 (CR-255 X-11·KIT-13): 다시 보이고, 11-24 판 글 (~해요 5줄)', () => {
+  const k = byId.karaoke;
+  assert.equal('hidden' in k, false, 'hidden 줄은 지운다 (false로 남기지 않음)');
+  assert.deepEqual(validateApp(k), []);
+  assert.ok(visibleApps(validateApps(data).apps).some((a) => a.id === 'karaoke'));
+  assert.equal(k.kind, 'web');
+  assert.equal(k.url, 'https://yl4315.github.io/yt-noraebang/');
+  assert.equal(k.version, '2026-11-24');
+  assert.equal(k.date, '2026-11-24');
+  assert.ok(k.notes.length <= 300, `notes ${k.notes.length}자`);
+  assert.ok(k.notice.length <= 80, `notice ${k.notice.length}자`);
+  const lines = k.notes.split('\n');
+  assert.equal(lines.length, 5, '한 줄에 하나씩 5줄');
+  for (const line of lines) assert.match(line, /요( \([^)]*\))?$/, `"~해요"로 끝: ${line}`);
+  assert.ok(k.notes.includes('유튜브'));
+  assert.ok(k.notes.includes('리모컨'));
+  assert.ok(k.notice.includes('리모컨'));
+  // 크리에이티브 랩이 세는 판 이름·멈춘 기능(재생목록 넣기)은 글에 없다
+  assert.doesNotMatch(k.notes, /차 판|재생목록/);
 });
