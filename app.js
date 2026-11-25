@@ -3,14 +3,26 @@
 //
 // GitHub 릴리스 읽기 (시간당 60번 한도)
 // - 저장소마다 한 번만 묻는다: 여러 앱이 같은 저장소를 쓰면 같은 요청을 함께 쓴다 (store-core createRepoLoader).
+//   최근 100개(1쪽)가 꽉 찼는데 화면에 그릴 앱 중 못 찾은 앱이 있을 때만 2쪽을 한 번 더 묻는다 (저장소당 최대 2번).
 // - 10분 안에 받은 저장소 목록이 있으면 GitHub에 다시 묻지 않고 localStorage 목록을 쓴다.
 //
 // 인터넷·API가 안 될 때
 // - 페이지와 apps.json: sw.js가 마지막으로 받은 파일을 준다 (홈 화면에서 열어도 마지막 화면이 보인다).
+//   망이 느리면 3.5초 뒤 저장분을 먼저 보이고, 늦게 온 apps.json이 달라졌으면 sw.js가 알려 줘서 한 번 다시 그린다.
 // - GitHub가 안 되면(인터넷 끊김·한도 초과·8초 넘게 답 없음) 앱마다: 저장해 둔 목록에서 고른 결과 + "마지막 확인 ○시 ○분",
-//   저장한 것도 없거나 그 앱 릴리스가 없으면 "GitHub에서 보기" 버튼(릴리스 페이지)으로 바꾼다.
+//   저장한 것도 없거나 그 앱 릴리스가 없으면 "GitHub에서 보기" 버튼으로 바꾼다
+//   (그 앱이 마지막으로 고른 릴리스 페이지를 저장해 뒀으면 그 페이지, 없으면 전체 릴리스 페이지).
 // - localStorage가 막힌 브라우저(사생활 보호 창 등)에서는 저장 없이 화면을 열 때마다 묻는다.
-import { cardView, createRepoLoader, releaseStateFor, validateApps, visibleApps } from './store-core.js';
+import {
+  cardView,
+  createRepoLoader,
+  releaseStateFor,
+  rememberReleasePage,
+  savedReleasePage,
+  validateApps,
+  visibleApps,
+  wantedReleases,
+} from './store-core.js';
 
 const FETCH_TIMEOUT_MS = 8000;
 const $ = (sel) => document.querySelector(sel);
@@ -60,8 +72,13 @@ const repos = createRepoLoader({
   setItem: storageSet,
 });
 
+// 저장소마다 화면에 그리는 앱들이 찾는 릴리스 (loadApps가 보이는 앱으로 채움 → 숨긴 앱은 찾지 않는다)
+let wanted = new Map();
+
 async function loadRelease(app) {
-  return releaseStateFor(app, await repos.load(app.release.repo));
+  const state = releaseStateFor(app, await repos.load(app.release.repo, wanted.get(app.release.repo)));
+  rememberReleasePage(app, state, storageSet);
+  return state;
 }
 
 // ── 카드 그리기 (글은 모두 textContent로 넣는다: 릴리스 설명에 HTML이 있어도 글자로만 보인다) ──
@@ -168,7 +185,7 @@ async function refreshRelease(parts, { showLoading }) {
   const key = `${state.status}|${state.release ? state.release.tag : ''}|${state.checkedAt || ''}`;
   if (!showLoading && key === parts.key) return; // 같은 내용이면 다시 그리지 않는다 ("더 보기" 펼친 것 유지)
   parts.key = key;
-  fill(parts, cardView(parts.app, state));
+  fill(parts, cardView(parts.app, state, { savedPageUrl: savedReleasePage(parts.app, storageGet) }));
 }
 
 function showListMessage(message, retry) {
@@ -189,13 +206,27 @@ function showListMessage(message, retry) {
   box.removeAttribute('aria-busy');
 }
 
+// 서비스 워커를 못 거친 첫 방문 등에서 apps.json을 못 받으면, 저장해 둔 apps.json을 한 번 더 찾는다 (없으면 null)
+async function cachedAppsList() {
+  try {
+    if (!('caches' in window)) return null;
+    const hit = await caches.match('apps.json', { ignoreSearch: true });
+    return hit ? await hit.json() : null;
+  } catch {
+    return null;
+  }
+}
+
 async function loadApps() {
   let data;
   try {
     data = await fetchJson('apps.json', { cache: 'no-cache' });
   } catch {
-    showListMessage('앱 목록을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 해 봐요.', true);
-    return;
+    data = await cachedAppsList();
+    if (!data) {
+      showListMessage('앱 목록을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 해 봐요.', true);
+      return;
+    }
   }
   const { apps: valid, errors } = validateApps(data);
   if (errors.length) console.warn('apps.json에서 고칠 점 (이 앱은 화면에서 뺐어요):', errors);
@@ -207,6 +238,7 @@ async function loadApps() {
   const box = $('#apps');
   box.replaceChildren();
   releaseCards.length = 0;
+  wanted = wantedReleases(apps);
   repos.reset(); // 이번에 그리는 카드들은 저장소마다 요청 한 번을 함께 쓴다
   for (const app of apps) {
     const parts = renderCard(app);
@@ -289,6 +321,13 @@ document.addEventListener('visibilitychange', () => {
 if ('serviceWorker' in navigator && window.isSecureContext) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+  // 느린 망에서 저장분을 먼저 보인 뒤 새 apps.json이 다르게 오면 sw.js가 알린다 → 이 화면에서 한 번만 다시 그린다
+  let reloadedForUpdate = false;
+  navigator.serviceWorker.addEventListener('message', (e) => {
+    if (!e.data || e.data.type !== 'yena-store-updated' || reloadedForUpdate) return;
+    reloadedForUpdate = true;
+    loadApps();
   });
 }
 

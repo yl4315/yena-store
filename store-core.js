@@ -32,10 +32,15 @@ export function isHttpsUrl(s) {
   }
 }
 
-/** `/releases/latest`는 쓰지 않는다: 같은 저장소의 "Latest"는 음성 모델(voice-*) 릴리스다. */
-export function releasesApiUrl(repo) {
+/**
+ * `/releases/latest`는 쓰지 않는다: 같은 저장소의 "Latest"는 음성 모델(voice-*) 릴리스다.
+ * 1쪽은 늘 같은 주소, 2쪽만 끝에 &page=2 (CR-255 KIT-09: 1쪽이 꽉 찼는데 못 찾은 앱이 있을 때만 읽는다).
+ */
+export function releasesApiUrl(repo, page = 1) {
   if (!isRepo(repo)) throw new Error(`repo 형식이 아니에요: ${repo}`);
-  return `https://api.github.com/repos/${repo}/releases?per_page=${RELEASES_PER_PAGE}`;
+  if (!Number.isInteger(page) || page < 1) throw new Error(`page는 1 이상 정수예요: ${page}`);
+  const base = `https://api.github.com/repos/${repo}/releases?per_page=${RELEASES_PER_PAGE}`;
+  return page === 1 ? base : `${base}&page=${page}`;
 }
 
 // ── 릴리스 고르기 ─────────────────────────────────────
@@ -307,11 +312,42 @@ export function isFresh(entry, now, maxAgeMs = CACHE_MAX_AGE_MS) {
 }
 
 /**
+ * 화면에 그리는 앱들 → 저장소마다 찾는 릴리스 목록 (Map: repo → [{ tagPrefix, asset, versionPrefix }]).
+ * createRepoLoader.load(repo, wanted)에 넘겨서, 1쪽에서 못 찾은 앱이 있는지 본다. android-release 앱만.
+ */
+export function wantedReleases(apps) {
+  const out = new Map();
+  for (const app of Array.isArray(apps) ? apps : []) {
+    if (!app || app.kind !== 'android-release' || !app.release) continue;
+    const { repo, tagPrefix, asset, versionPrefix } = app.release;
+    if (!out.has(repo)) out.set(repo, []);
+    out.get(repo).push({ tagPrefix, asset, versionPrefix });
+  }
+  return out;
+}
+
+/** 1쪽 원본 목록이 꽉 찼고(100개), 찾는 앱 중 고를 릴리스가 없는 앱이 하나라도 있으면 true → 2쪽을 한 번 더. */
+export function needsSecondPage(list, repo, wanted) {
+  if (!Array.isArray(list) || list.length < RELEASES_PER_PAGE) return false;
+  if (!Array.isArray(wanted) || !wanted.length) return false;
+  return wanted.some((w) => pickRelease(list, { repo, ...w }) === null);
+}
+
+/** 1쪽 + 2쪽 이어 붙이기. 같은 tag_name은 앞(1쪽) 것 한 번만. */
+export function mergeReleasePages(first, second) {
+  const seen = new Set(first.map((r) => r && r.tag_name));
+  return [...first, ...(Array.isArray(second) ? second : []).filter((r) => r && !seen.has(r.tag_name))];
+}
+
+/**
  * 저장소 목록 읽기 (브라우저에서는 fetch·localStorage를 넣어 쓰고, 테스트에서는 가짜를 넣는다).
  * - 같은 저장소는 같은 Promise를 함께 쓴다 → 화면 한 번에 GitHub 요청 한 번
+ *   (CR-255 KIT-09: 1쪽 100개가 꽉 찼는데 wanted 중 못 찾은 앱이 있을 때만 2쪽을 딱 한 번 더 → 저장소당 최대 2번, 3쪽은 없음.
+ *    2쪽이 실패해도 1쪽 결과로 'ok'. 합친 목록을 저장소 단위로 10분 저장)
  * - 10분 안에 받은 목록이 있으면 GitHub에 묻지 않는다
  * - 실패하면 저장해 둔 목록(오래돼도) → status 'stale', 그것도 없으면 'error'
  * - reset(): 다른 앱에 갔다 돌아왔을 때처럼 다시 확인할 때 (10분 규칙은 그대로)
+ * load(repo, wanted): wanted = 그 저장소에서 화면에 그리는 앱들의 [{ tagPrefix, asset, versionPrefix }] (wantedReleases)
  * 돌려주는 값: { status: 'ok' | 'stale' | 'error', releases, checkedAt }
  */
 export function createRepoLoader({ fetchList, getItem, setItem, now = () => Date.now() }) {
@@ -323,13 +359,22 @@ export function createRepoLoader({ fetchList, getItem, setItem, now = () => Date
       return null;
     }
   };
-  async function run(repo) {
+  async function run(repo, wanted) {
     const key = repoCacheKey(repo);
     const cached = parseRepoCacheEntry(read(key));
     if (isFresh(cached, now())) return { status: 'ok', releases: cached.releases, checkedAt: cached.checkedAt };
     try {
-      const list = await fetchList(releasesApiUrl(repo));
+      let list = await fetchList(releasesApiUrl(repo));
       if (!Array.isArray(list)) throw new Error('릴리스 목록이 아니에요');
+      // 원본 길이로 센다 (초안·파일 없는 것을 빼기 전)
+      if (needsSecondPage(list, repo, wanted)) {
+        try {
+          const more = await fetchList(releasesApiUrl(repo, 2));
+          if (Array.isArray(more)) list = mergeReleasePages(list, more);
+        } catch {
+          /* 2쪽을 못 읽어도 1쪽 결과는 그대로 쓴다 (화면은 지금과 같음) */
+        }
+      }
       const entry = makeRepoCacheEntry(list, now());
       try {
         setItem(key, JSON.stringify(entry));
@@ -343,8 +388,8 @@ export function createRepoLoader({ fetchList, getItem, setItem, now = () => Date
     }
   }
   return {
-    load(repo) {
-      if (!shared.has(repo)) shared.set(repo, run(repo));
+    load(repo, wanted) {
+      if (!shared.has(repo)) shared.set(repo, run(repo, wanted));
       return shared.get(repo);
     },
     reset() {
@@ -364,12 +409,58 @@ export function releaseStateFor(app, repoState) {
   return { status: 'ok', release, checkedAt: repoState.checkedAt };
 }
 
+// ── 앱마다 저장해 두는 릴리스 페이지 (CR-255 KIT-21) ─────
+// GitHub 한도·끊김으로 버전을 못 볼 때 "GitHub에서 보기"가 여러 앱이 섞인 전체 릴리스 페이지 대신
+// 그 앱이 마지막으로 고른 릴리스 한 개 페이지로 가게 한다. 한 번도 고른 적 없으면 지금처럼 fallbackUrl.
+
+export function appPageKey(id) {
+  return `yena-store.appPage.${id}`;
+}
+
+/** 저장해 둔 주소는 https://github.com/<그 앱 저장소>/releases/tag/<그 앱 태그 앞머리>… 만 믿는다. 아니면 null (버림). */
+export function trustedPageUrl(app, url) {
+  const r = app && app.release;
+  if (!r || !isRepo(r.repo) || typeof r.tagPrefix !== 'string' || !isHttpsUrl(url)) return null;
+  let u;
+  try {
+    u = new URL(url);
+  } catch {
+    return null;
+  }
+  if (u.origin !== 'https://github.com' || u.search || u.hash) return null;
+  return u.pathname.startsWith(`/${r.repo}/releases/tag/${r.tagPrefix}`) ? u.href : null;
+}
+
+/** 고른 릴리스의 페이지를 그 앱 칸에 저장 (저장이 막혀도 화면은 그대로). 저장하려던 주소를 돌려준다 (없으면 null). */
+export function rememberReleasePage(app, state, setItem) {
+  const url = state && state.release ? trustedPageUrl(app, state.release.pageUrl) : null;
+  if (!url) return null;
+  try {
+    setItem(appPageKey(app.id), url);
+  } catch {
+    /* 저장 못 하면 다음에 다시 저장하면 된다 */
+  }
+  return url;
+}
+
+/** 저장해 둔 그 앱 릴리스 페이지. 없거나 믿을 수 없는 글이면 null. */
+export function savedReleasePage(app, getItem) {
+  let text;
+  try {
+    text = getItem(appPageKey(app.id));
+  } catch {
+    return null;
+  }
+  return trustedPageUrl(app, text);
+}
+
 // ── 카드에 보일 내용 ──────────────────────────────────
 
 /**
  * 앱 하나 + (android-release면) 릴리스 상태 → 카드에 보일 글과 버튼.
  * state.status: 'loading' | 'ok' | 'stale'(인터넷·API 실패, 저장해 둔 결과) | 'error'(실패, 저장한 것도 없음)
  * action.type: 'install' | 'open' | 'link' | 'loading' | 'locked'
+ * opts.savedPageUrl: 그 앱이 마지막으로 고른 릴리스 페이지 (savedReleasePage). 'error'일 때만 "GitHub에서 보기" 주소로 쓴다
  */
 export function cardView(app, state = {}, opts = {}) {
   const view = { meta: '', notes: '', notice: '', status: '', loading: false, action: null };
@@ -401,7 +492,9 @@ export function cardView(app, state = {}, opts = {}) {
     return view;
   }
   view.status = state.status === 'ok' ? '아직 올라온 설치 파일이 없어요' : '지금은 버전을 확인하지 못했어요';
-  view.action = fallback;
+  // 확인을 못 했을 때(한도·끊김)만 저장해 둔 그 앱 페이지로 (CR-255 KIT-21). 목록을 읽었는데 파일이 없으면 지금처럼 전체 페이지
+  const saved = state.status === 'error' ? trustedPageUrl(app, opts.savedPageUrl) : null;
+  view.action = saved ? { ...fallback, href: saved } : fallback;
   return view;
 }
 
