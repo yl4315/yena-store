@@ -8,7 +8,7 @@
       "dept": "기획조정실",
       "icon": "icons/apps/calendar.png",
       "color": "#FDE1EA",
-      "summary": "일정·루틴·할 일·일기·비서·부부회의를 한 앱에서",
+      "summary": "일정·루틴·할 일·일기·비서·부부회의를 한 앱에서",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-day",
@@ -30,7 +30,7 @@
       "url": "https://yl4315.github.io/yt-noraebang/",
       "version": "2026-11-24",
       "date": "2026-11-24",
-      "notes": "유튜브 곡도 넣어 부를 수 있어요 (퍼가기를 막은 영상은 못 틀어요)\n손님은 QR을 찍어 자기 폰으로 곡을 예약해요\n집 AI로 MR을 만들고 가사를 노래에 맞춰요\n녹음은 작은 파일로 나눠 공유해요\n내 폰을 리모컨으로 써요 (다른 와이파이에서도)",
+      "notes": "유튜브 곡도 넣어 부를 수 있어요 (퍼가기를 막은 영상은 못 틀어요)\n손님은 QR을 찍어 자기 폰으로 곡을 예약해요\n집 AI로 MR을 만들고 가사를 노래에 맞춰요\n녹음은 작은 파일로 나눠 공유해요\n내 폰을 리모컨으로 써요 (다른 와이파이에서도)",
       "notice": "내 폰 리모컨은 PC 노래방 설정에서 [폰 리모컨 받기]를 켜고, 로그인한 폰으로 해요"
     },
     {
@@ -181,7 +181,7 @@
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/fridge.png",
       "color": "#D0F6F2",
-      "summary": "냉장고·장보기·화장대·소모품을 한 앱에서",
+      "summary": "냉장고·장보기·화장대·소모품을 한 앱에서",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -198,7 +198,7 @@
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/vanity.png",
       "color": "#FFE4F4",
-      "summary": "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
+      "summary": "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -215,7 +215,7 @@
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/supplies.png",
       "color": "#E2EEFF",
-      "summary": "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
+      "summary": "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -232,7 +232,7 @@
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/receipt.png",
       "color": "#FEE7E2",
-      "summary": "옛 앱이에요. 지우지 말고 '예태 가계부' 안에서 써요",
+      "summary": "옛 앱이에요. 지우지 말고 '예태 가계부' 안에서 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
@@ -346,7 +346,7 @@
         "asset": ".apk",
         "fallbackUrl": "https://github.com/yl4315/yena-store/releases"
       },
-      "notice": "안드로이드 폰 전용이에요. 녹음 정리는 집 AI에 닿는 폰에서만 돼요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
+      "notice": "안드로이드 폰 전용이에요. 녹음 정리는 집 AI에 닿는 폰에서만 돼요. 처음 설치할 때는 아래 '처음 설치할 때'를 봐요"
     }
   ]
 }
