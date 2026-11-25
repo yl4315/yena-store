@@ -111,7 +111,7 @@
       "dept": "기획조정실",
       "icon": "icons/apps/memo.png",
       "color": "#FBF1C7",
-      "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '할 일'을 써요",
+      "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '할 일'을 써요",
       "kind": "android-release",
       "release": {
         "repo": "yl4315/yena-store",
