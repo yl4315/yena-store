@@ -376,6 +376,42 @@ test('토큰 파일은 디자인실 원본 그대로 (맨 위 자동 생성 주�
   assert.match(readFileSync(join(ROOT, 'haptics.js'), 'utf8'), /^\/\/ 자동 생성, 직접 고치지 말 것 — 원본 departments\/design\/tokens\/tokens\.json/);
 });
 
+// CR-255 KIT-17: 본사 out/karaoke/ 복사본의 판 (공개 시험이 비공개 본사 폴더를 읽지 않게 판 글자만 본다)
+test('토큰 판 v1.5.0 (CR-255 KIT-17): tokens.css·haptics.js 머리 글, 읽는 회색 글 변수가 있다', () => {
+  const tokens = readFileSync(join(ROOT, 'tokens.css'), 'utf8');
+  const haptics = readFileSync(join(ROOT, 'haptics.js'), 'utf8');
+  assert.match(tokens.split('\n').slice(0, 4).join('\n'), /토큰 v1\.5\.0 \(/);
+  assert.match(haptics.split('\n').slice(0, 3).join('\n'), /토큰 v1\.5\.0 \(/);
+  // 라이트 #696E76 (흰 바탕 5.13 · 카드 면 4.79), 다크는 muted와 같은 #8E949E
+  assert.match(tokens, /--color-text-muted-strong: #696E76;/);
+  assert.match(tokens, /--color-text-muted-strong: #8E949E;/);
+});
+
+// CR-255 KIT-18 (디자인실 정함): 읽는 회색 글 5곳만 muted-strong, 구역 이름·바닥 글은 muted, 꺾쇠 테두리 2곳 그대로
+test('회색 글 (CR-255 KIT-18): muted-strong 5곳 · muted 3곳 · 꺾쇠 테두리 2곳, 새 색 0', () => {
+  const css = readFileSync(join(ROOT, 'style.css'), 'utf8');
+  /** 선택자 → 그 칸의 color 값 (칸 안의 color: 한 줄) */
+  const colorOf = (selector) => {
+    const at = css.indexOf(`${selector} {`);
+    assert.ok(at >= 0, `${selector} 칸이 없어요`);
+    const block = css.slice(at, css.indexOf('}', at));
+    const m = /(?:^|[;{\s])color: (var\(--[a-z-]+\));/.exec(block);
+    assert.ok(m, `${selector}에 color가 없어요`);
+    return m[1];
+  };
+  for (const sel of ['.subtitle', '.state', '.app-summary', '.meta, .status', '.install-text']) {
+    assert.equal(colorOf(sel), 'var(--color-text-muted-strong)', sel);
+  }
+  for (const sel of ['.notes-label', '.section-title', '.footer']) {
+    assert.equal(colorOf(sel), 'var(--color-text-muted)', sel);
+  }
+  assert.equal((css.match(/color: var\(--color-text-muted-strong\);/g) || []).length, 5, 'muted-strong은 5곳만');
+  assert.equal((css.match(/(?:^|[\s;{])color: var\(--color-text-muted\);/g) || []).length, 3, '글 muted는 3곳만');
+  assert.equal((css.match(/solid var\(--color-text-muted\);/g) || []).length, 2, '꺾쇠 테두리 2곳 그대로');
+  // style.css는 토큰 변수만 (# 색 0)
+  assert.doesNotMatch(css.replace(/\/\*[\s\S]*?\*\//g, ''), /#[0-9A-Fa-f]{3,8}\b/);
+});
+
 test('도움말 "처음 설치할 때" (CR-117, CR-189 순서): 아이폰 안 됨·카카오톡 다른 브라우저·하는 순서·막히면 삼성 자동 차단 (모든 설치 앱에 같은 글)', () => {
   const help = /<details class="help" id="help-install">([\s\S]*?)<\/details>/.exec(html);
   assert.ok(help, '처음 설치할 때 칸이 없어요');

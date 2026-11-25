@@ -7,7 +7,7 @@
       "short": "하루",
       "dept": "기획조정실",
       "icon": "icons/apps/calendar.png",
-      "color": "#FDE8EE",
+      "color": "#FDE1EA",
       "summary": "일정·루틴·할 일·일기·비서·부부회의를 한 앱에서",
       "kind": "android-release",
       "release": {
@@ -24,7 +24,7 @@
       "short": "노래방",
       "dept": "크리에이티브 랩",
       "icon": "icons/apps/karaoke.png",
-      "color": "#FDDCCF",
+      "color": "#F5E6FF",
       "summary": "유튜브 MR로 부르고 가사·녹음·점수까지",
       "kind": "web",
       "url": "https://yl4315.github.io/yt-noraebang/",
@@ -39,7 +39,7 @@
       "short": "가족",
       "dept": "패밀리 허브",
       "icon": "icons/apps/family.png",
-      "color": "#CDEEDD",
+      "color": "#FFE6E9",
       "summary": "가족끼리 사진·소식·기념일을 나눠요",
       "kind": "android-release",
       "release": {
@@ -75,7 +75,7 @@
       "short": "여행",
       "dept": "인사·웰니스팀",
       "icon": "icons/apps/packing.png",
-      "color": "#E8D3F0",
+      "color": "#D6F2FE",
       "summary": "여행 짐 목록을 만들고 싸면서 체크해요",
       "kind": "android-release",
       "release": {
@@ -93,7 +93,7 @@
       "short": "팁계산",
       "dept": "재무회계팀",
       "icon": "icons/apps/tip.png",
-      "color": "#FDF0C4",
+      "color": "#FEE8D6",
       "summary": "팁·나눠 내기를 바로 계산해요",
       "kind": "android-release",
       "release": {
@@ -110,7 +110,7 @@
       "short": "할 일",
       "dept": "기획조정실",
       "icon": "icons/apps/memo.png",
-      "color": "#FDE8EE",
+      "color": "#FBF1C7",
       "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '할 일'을 써요",
       "kind": "android-release",
       "release": {
@@ -128,7 +128,7 @@
       "short": "집중",
       "dept": "기획조정실",
       "icon": "icons/apps/focus.png",
-      "color": "#FDE8EE",
+      "color": "#FEE7E2",
       "summary": "타이머를 켜고 집중하면 포인트가 쌓여요",
       "kind": "android-release",
       "release": {
@@ -146,7 +146,7 @@
       "short": "브리핑",
       "dept": "기획조정실",
       "icon": "icons/apps/briefing.png",
-      "color": "#FDE8EE",
+      "color": "#E2EEFF",
       "summary": "아침마다 관심 키워드 뉴스를 3분에 훑어봐요",
       "kind": "android-release",
       "release": {
@@ -163,7 +163,7 @@
       "short": "일기",
       "dept": "인사·웰니스팀",
       "icon": "icons/apps/worklog.png",
-      "color": "#E8D3F0",
+      "color": "#EAEBFE",
       "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '일기'를 써요",
       "kind": "android-release",
       "release": {
@@ -180,7 +180,7 @@
       "short": "냉장고",
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/fridge.png",
-      "color": "#CDEBFA",
+      "color": "#D0F6F2",
       "summary": "냉장고·장보기·화장대·소모품을 한 앱에서",
       "kind": "android-release",
       "release": {
@@ -197,7 +197,7 @@
       "short": "화장대",
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/vanity.png",
-      "color": "#CDEBFA",
+      "color": "#FFE4F4",
       "summary": "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
       "kind": "android-release",
       "release": {
@@ -214,7 +214,7 @@
       "short": "소모품",
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/supplies.png",
-      "color": "#CDEBFA",
+      "color": "#E2EEFF",
       "summary": "옛 앱이에요. 지우지 말고 '스마트 살림' 안에서 써요",
       "kind": "android-release",
       "release": {
@@ -231,7 +231,7 @@
       "short": "영수증",
       "dept": "총무·스마트홈팀",
       "icon": "icons/apps/receipt.png",
-      "color": "#CDEBFA",
+      "color": "#FEE7E2",
       "summary": "옛 앱이에요. 지우지 말고 '예태 가계부' 안에서 써요",
       "kind": "android-release",
       "release": {
@@ -249,7 +249,7 @@
       "short": "데스크",
       "dept": "본사",
       "icon": "icons/apps/desk.png",
-      "color": "#EEEAFE",
+      "color": "#F5E6FF",
       "summary": "곧 상하는 것·사야 할 것과 월간 보고서를 한눈에",
       "kind": "android-release",
       "release": {
@@ -267,7 +267,7 @@
       "short": "사진정리",
       "dept": "크리에이티브 랩",
       "icon": "icons/apps/photoclean.png",
-      "color": "#FDDCCF",
+      "color": "#D0F6F2",
       "summary": "비슷한·흐린 사진과 스크린샷을 모아 휴지통으로 정리해요",
       "kind": "android-release",
       "release": {
@@ -285,7 +285,7 @@
       "short": "영주권",
       "dept": "인사·웰니스팀",
       "icon": "icons/apps/greencard.png",
-      "color": "#E8D3F0",
+      "color": "#FEE8D6",
       "summary": "이민국 진행 단계를 가족용 한국어로 봐요",
       "kind": "android-release",
       "release": {
@@ -303,7 +303,7 @@
       "short": "악보",
       "dept": "크리에이티브 랩",
       "icon": "icons/apps/piano.png",
-      "color": "#FDDCCF",
+      "color": "#EFF0F3",
       "summary": "노래 파일에서 멜로디 악보와 계이름을 만들어요",
       "kind": "android-release",
       "release": {
@@ -320,7 +320,7 @@
       "short": "비서",
       "dept": "기획조정실",
       "icon": "icons/apps/assistant.png",
-      "color": "#FDE8EE",
+      "color": "#D6F2FE",
       "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '비서'를 써요",
       "kind": "android-release",
       "release": {
@@ -337,7 +337,7 @@
       "short": "부부회의",
       "dept": "패밀리 허브",
       "icon": "icons/apps/couple.png",
-      "color": "#CDEEDD",
+      "color": "#FBF1C7",
       "summary": "옛 앱이에요. 지우지 말고 '예나의 하루' 안 '부부회의'를 써요",
       "kind": "android-release",
       "release": {

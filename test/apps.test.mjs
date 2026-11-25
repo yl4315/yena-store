@@ -85,11 +85,44 @@ test('웹앱: 주소는 https만', () => {
   assert.doesNotMatch(JSON.stringify(data), /http:\/\//);
 });
 
-test('아이콘 색 (디자인 언어 3-8 icon.dept.*, 가계부는 CR-060 앱 색 바질 top)', () => {
-  assert.equal(byId.calendar.color, '#FDE8EE');
-  assert.equal(byId.karaoke.color, '#FDDCCF');
-  assert.equal(byId.family.color, '#CDEEDD');
+test('아이콘 색 (CR-255 KIT-32: 그 앱 아이콘 팔레트 icon.app.<색>.top, 가계부는 CR-060부터 바질 top 그대로)', () => {
+  assert.equal(byId.calendar.color, '#FDE1EA');
+  assert.equal(byId.karaoke.color, '#F5E6FF');
+  assert.equal(byId.family.color, '#FFE6E9');
   assert.equal(byId.finance.color, '#DBF5DF');
+});
+
+// 카드 대신 색 (아이콘이 안 뜰 때 보이는 둥근 칸) = 그 앱 아이콘 바탕 그라데이션 첫 색.
+// 값은 회사 토큰 v1.5.0 icon.app.<팔레트>.top (디자인실 CR-255 보기 3장 표). 아이콘 팔레트가 바뀌면 이 표도 같이.
+const ICON_TOP = {
+  calendar: ['haru', '#FDE1EA'],
+  karaoke: ['grape', '#F5E6FF'],
+  family: ['flamingo', '#FFE6E9'],
+  finance: ['basil', '#DBF5DF'],
+  packing: ['peacock', '#D6F2FE'],
+  tip: ['tangerine', '#FEE8D6'],
+  memo: ['banana', '#FBF1C7'],
+  focus: ['tomato', '#FEE7E2'],
+  briefing: ['blue', '#E2EEFF'],
+  worklog: ['blueberry', '#EAEBFE'],
+  fridge: ['mint', '#D0F6F2'],
+  vanity: ['plum', '#FFE4F4'],
+  supplies: ['blue', '#E2EEFF'],
+  receipt: ['tomato', '#FEE7E2'],
+  desk: ['grape', '#F5E6FF'],
+  photoclean: ['mint', '#D0F6F2'],
+  greencard: ['tangerine', '#FEE8D6'],
+  piano: ['graphite', '#EFF0F3'],
+  assistant: ['peacock', '#D6F2FE'],
+  couple: ['banana', '#FBF1C7'],
+};
+
+test('아이콘 색 (CR-255 KIT-32): 20칸 모두 그 앱 아이콘 팔레트 top 색 (숨긴 앱도 다시 보일 때 맞게)', () => {
+  assert.deepEqual(Object.keys(ICON_TOP).sort(), data.apps.map((a) => a.id).sort(), '표와 apps.json의 앱이 같다');
+  for (const a of data.apps) {
+    const [palette, top] = ICON_TOP[a.id];
+    assert.equal(a.color, top, `${a.id}: icon.app.${palette}.top`);
+  }
 });
 
 // ── 규칙이 틀린 칸을 잡는지 ──────────────────────────

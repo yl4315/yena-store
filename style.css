@@ -41,7 +41,7 @@ b { font-weight: var(--font-weight-bold); }
 /* 머리: 큰 제목 + 작은 회색 부제 */
 .top { padding: calc(var(--space-section) + env(safe-area-inset-top)) 0 var(--space-screen); }
 .title { margin: 0; font: var(--font-title-screen); }
-.subtitle { margin: var(--space-xxs) 0 0; font: var(--font-meta); color: var(--color-text-muted); }
+.subtitle { margin: var(--space-xxs) 0 0; font: var(--font-meta); color: var(--color-text-muted-strong); }
 
 /* 카드 */
 .card {
@@ -56,7 +56,7 @@ b { font-weight: var(--font-weight-bold); }
   margin: 0;
   padding: var(--space-section) 0;
   font: var(--font-body-small);
-  color: var(--color-text-muted);
+  color: var(--color-text-muted-strong);
   text-align: center;
 }
 
@@ -86,12 +86,12 @@ b { font-weight: var(--font-weight-bold); }
 .app-summary {
   margin: var(--space-xxs) 0 0;
   font: var(--font-body-small);
-  color: var(--color-text-muted);
+  color: var(--color-text-muted-strong);
 }
 
 .app-meta { display: flex; flex-direction: column; gap: var(--space-xxs); margin-top: var(--space-xs); }
 .app-meta:empty { display: none; }
-.meta, .status { margin: 0; font: var(--font-meta); color: var(--color-text-muted); }
+.meta, .status { margin: 0; font: var(--font-meta); color: var(--color-text-muted-strong); }
 
 .app-body { display: flex; flex-direction: column; gap: var(--space-xl); }
 
@@ -190,7 +190,7 @@ b { font-weight: var(--font-weight-bold); }
   font-size: var(--font-body-size);
   font-weight: var(--font-weight-semibold);
 }
-.install-text { margin: var(--space-xxs) 0 0; font: var(--font-meta); color: var(--color-text-muted); }
+.install-text { margin: var(--space-xxs) 0 0; font: var(--font-meta); color: var(--color-text-muted-strong); }
 .btn.btn-small {
   flex: none;
   width: auto;
